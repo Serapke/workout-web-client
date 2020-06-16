@@ -15,29 +15,29 @@ interface PropsFromDispatch {
   fetchWorkouts: typeof fetchWorkoutsRequest;
 }
 
-interface OwnProps {}
+interface OwnProps { }
 
 type AllProps = PropsFromState & PropsFromDispatch & OwnProps;
 
-const FavoritesPage: React.FunctionComponent<AllProps> = (props) => {
+const FavoritesPage: React.FunctionComponent<AllProps> = ({ routines, workouts, fetchRoutines, fetchWorkouts }) => {
   React.useEffect(() => {
-    props.fetchRoutines();
-    props.fetchWorkouts();
-  }, [props]);
+    fetchRoutines();
+    fetchWorkouts();
+  }, [fetchRoutines, fetchWorkouts]);
   return (
     <div>
       <SliderSection
         title="Plans"
         addHref="/plan/create"
         addTitle="+ NEW PLAN"
-        items={props.routines}
+        items={routines}
         type={ItemType.ROUTINE}
       />
       <SliderSection
         title="Workouts"
         addHref="/workout/create"
         addTitle="+ NEW WORKOUT"
-        items={props.workouts}
+        items={workouts}
         type={ItemType.WORKOUT}
       />
     </div>
