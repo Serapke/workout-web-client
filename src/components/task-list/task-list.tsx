@@ -8,6 +8,7 @@ import { ModalType } from "../modal/modal";
 import { ActionType } from "../../store/modal/types";
 import { reorder, removeItem } from "../../utils/immutable";
 import TaskItem from "../task-item";
+import { List } from '@material-ui/core';
 
 interface OwnProps {
   tasks: Task[];
@@ -17,8 +18,6 @@ interface OwnProps {
 }
 
 const TaskList = ({ tasks, editable, showModal, updateTasks }: OwnProps) => {
-  const [activeTask, setActiveTask] = React.useState<number | false>(false);
-
   if (!tasks || !tasks.length) {
     return (
       <div>
@@ -26,10 +25,6 @@ const TaskList = ({ tasks, editable, showModal, updateTasks }: OwnProps) => {
       </div>
     );
   }
-
-  const onTaskClick = (taskID: number) => (_e: React.ChangeEvent<{}>, isExpanded: boolean) => {
-    setActiveTask(isExpanded ? taskID : false);
-  };
 
   const onSetClick = (taskIndex: number, setIndex: number) => {
     if (!editable) return;
@@ -77,22 +72,20 @@ const TaskList = ({ tasks, editable, showModal, updateTasks }: OwnProps) => {
     <DragDropContext onDragEnd={onDragEnd}>
       <Droppable droppableId="list" isDropDisabled={!editable}>
         {(provided) => (
-          <div ref={provided.innerRef} {...provided.droppableProps}>
+          <List ref={provided.innerRef} {...provided.droppableProps}>
             {tasks.map((task, index) => (
               <TaskItem
                 index={index}
                 task={task}
                 key={task.id + "_" + index}
-                expanded={activeTask === task.id}
                 editable={editable}
-                onChange={onTaskClick(task.id)}
                 onSetClick={onSetClick}
                 onAddSetClick={onAddSetClick}
                 onDeleteClick={onDeleteClick}
               />
             ))}
             {provided.placeholder}
-          </div>
+          </List>
         )}
       </Droppable>
     </DragDropContext>

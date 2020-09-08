@@ -14,9 +14,9 @@ interface Props {
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
-      width: "30px",
-      height: "30px",
-      fontSize: "11px",
+      width: "28px",
+      height: "28px",
+      fontSize: "10px",
     },
     primary: {
       color: "white",
