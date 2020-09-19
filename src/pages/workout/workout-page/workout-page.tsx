@@ -1,7 +1,7 @@
 import * as React from "react";
 import { connect } from "react-redux";
 import { RouteComponentProps, Link } from "react-router-dom";
-import { Typography, Button, Box, makeStyles, Theme, createStyles, Chip } from "@material-ui/core";
+import { Typography, Button, Box, makeStyles, Theme, createStyles, Chip, Fab } from "@material-ui/core";
 import { Workout } from "../../../store/types";
 import { getWorkout } from "../../../services/workout";
 import TaskList from "../../../components/task-list";
@@ -21,6 +21,13 @@ const useStyles = makeStyles((theme: Theme) =>
     restBox: {
       marginBottom: theme.spacing(2),
     },
+    fab: {
+      position: 'fixed',
+      bottom: theme.spacing(2),
+      left: "50%",
+      transform: "translateX(-50%)",
+      width: "200px",
+    }
   })
 );
 
@@ -33,6 +40,10 @@ const WorkoutPage: React.FunctionComponent<AllProps> = ({ match }) => {
   }, [match.params.id]);
 
   if (!workout) return <div>Loading...</div>;
+
+  const onStartClick = () => {
+    console.log("Start clicked!");
+  }
 
   return (
     <div>
@@ -52,6 +63,7 @@ const WorkoutPage: React.FunctionComponent<AllProps> = ({ match }) => {
       <Box>
         <TaskList tasks={workout.tasks} />
       </Box>
+      <Fab variant="extended" className={classes.fab} color="secondary" onClick={onStartClick}>Start</Fab>
     </div>
   );
 };
