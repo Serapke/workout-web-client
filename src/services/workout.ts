@@ -1,4 +1,4 @@
-import { ApiResponse } from "./types";
+import { ApiResponse, WorkoutStatus } from "./types";
 import { Workout } from "../store/types";
 
 export const getAllWorkouts: () => Promise<Workout[]> = async () => {
@@ -10,6 +10,18 @@ export const getWorkout: (id: string) => Promise<Workout> = async (id) => {
   const response = await fetch(`${process.env.REACT_APP_API_URL}/workout/${id}`);
   return response.json();
 };
+
+export const getActiveWorkoutStatus: (id: string) => Promise<WorkoutStatus> = async (id) => {
+  const response = await fetch(`${process.env.REACT_APP_API_URL}/workout/startWorkout?workoutId=${id}`, {
+    method: "POST",
+  });
+  return response.json();
+}
+
+export const continueWorkout: (workoutStatusId: number) => Promise<WorkoutStatus> = async (workoutStatusId) => {
+  const response = await fetch(`${process.env.REACT_APP_API_URL}/workout/continueWorkout?workoutStatusId=${workoutStatusId}`);
+  return response.json();
+}
 
 export const createWorkout: (workout: Workout) => Promise<ApiResponse> = async (workout) => {
   const response = await fetch(`${process.env.REACT_APP_API_URL}/workout/create`, {

@@ -31,7 +31,7 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
-const WorkoutPage: React.FunctionComponent<AllProps> = ({ match }) => {
+const WorkoutPage: React.FunctionComponent<AllProps> = ({ match, history }) => {
   const classes = useStyles();
   const [workout, updateWorkout] = React.useState<Workout>();
 
@@ -43,6 +43,7 @@ const WorkoutPage: React.FunctionComponent<AllProps> = ({ match }) => {
 
   const onStartClick = () => {
     console.log("Start clicked!");
+    history.push(`/workout/${match.params.id}/live`);
   }
 
   return (
