@@ -42,7 +42,6 @@ const WorkoutPage: React.FunctionComponent<AllProps> = ({ match, history }) => {
   if (!workout) return <div>Loading...</div>;
 
   const onStartClick = () => {
-    console.log("Start clicked!");
     history.push(`/workout/${match.params.id}/live`);
   }
 

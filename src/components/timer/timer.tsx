@@ -25,7 +25,7 @@ const formatTwoDigits = (n: number, hideOnZero: boolean = false): string => {
   return n < 10 ? '0' + n : '' + n;
 }
 
-const Timer = ({ date, type = TimerType.TIMER, onEnd }: OwnProps) => {
+const Timer = ({ date, type = TimerType.TIMER, onEnd = () => { } }: OwnProps) => {
   const calculateDiff = () => {
     return type === TimerType.TIMER ? +new Date(date) - +new Date() : +new Date() - +new Date(date);
   }

@@ -37,7 +37,6 @@ const WorkoutLivePage: React.FunctionComponent<AllProps> = ({ match }) => {
     let setsCount = status.currentTask.setsGoal.length;
     setsDone[setIndex] = status.currentTask.setsGoal[setIndex];
     updateSetsDone(setsDone);
-    console.log(status.nextTask);
     if (setIndex + 1 < setsCount) {
       updateSetIndex(setIndex + 1);
     } else if (status.nextTask) {
