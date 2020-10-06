@@ -1,6 +1,6 @@
 import * as React from "react";
 
-import { makeStyles, Theme, createStyles, Avatar } from "@material-ui/core";
+import { makeStyles, Theme, createStyles, Box } from "@material-ui/core";
 
 type Style = "primary" | "secondary";
 
@@ -9,15 +9,19 @@ interface Props {
   color: Style;
   outlined?: boolean;
   children: React.ReactNode;
+  size?: Size;
+}
+
+type Size = 'small' | 'medium' | 'large';
+
+const sizeMap = {
+  small: "32px",
+  medium: "40px",
+  large: "48px"
 }
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
-    root: {
-      width: "28px",
-      height: "28px",
-      fontSize: "10px",
-    },
     primary: {
       color: "white",
       backgroundColor: theme.palette.primary.main,
@@ -32,18 +36,20 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
-const CircleItem = ({ onClick, color, outlined, children }: Props) => {
+const CircleItem = ({ onClick, color, outlined, children, size = 'small' }: Props) => {
   const classes = useStyles();
   return (
-    <Avatar
-      classes={{
-        root: classes.root,
-      }}
+    <Box
+      borderRadius="50%"
+      textAlign="center"
+      width={sizeMap[size]}
+      height={sizeMap[size]}
+      lineHeight={sizeMap[size]}
       className={`${classes[color]}${outlined ? ` ${classes.outlined}` : ""}`}
       onClick={onClick}
     >
       {children}
-    </Avatar>
+    </Box>
   );
 };
 

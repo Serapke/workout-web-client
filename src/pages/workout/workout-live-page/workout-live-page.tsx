@@ -3,15 +3,20 @@ import { connect } from "react-redux";
 import { RouteComponentProps } from "react-router-dom";
 
 import { ApplicationState } from "../../../store";
-import { getActiveWorkoutStatus } from 'services/workout';
+import { getActiveWorkoutStatus, continueWorkout } from 'services/workout';
 import { WorkoutStatus } from 'services/types';
 import ExerciseState from './exercise-state';
+import ExerciseResultState from './exercise-result-state';
 
 interface RouteParams {
   id: string;
 }
 
-type WorkoutPageState = "exercise" | "exercise-result";
+enum WorkoutPageState {
+  EXERCISE,
+  EXERCISE_RESULT,
+  WORKOUT_DONE
+}
 
 type AllProps = RouteComponentProps<RouteParams>;
 
@@ -19,7 +24,7 @@ const WorkoutLivePage: React.FunctionComponent<AllProps> = ({ match }) => {
   const [status, updateStatus] = React.useState<WorkoutStatus>();
   const [setIndex, updateSetIndex] = React.useState<number>();
   const [setsDone, updateSetsDone] = React.useState<number[]>([]);
-  const [pageState, updatePageState] = React.useState<WorkoutPageState>("exercise");
+  const [pageState, updatePageState] = React.useState<WorkoutPageState>(WorkoutPageState.EXERCISE);
 
   React.useEffect(() => {
     getActiveWorkoutStatus(match.params.id).then((status) => updateStatus(status));
@@ -32,14 +37,26 @@ const WorkoutLivePage: React.FunctionComponent<AllProps> = ({ match }) => {
     let setsCount = status.currentTask.setsGoal.length;
     setsDone[setIndex] = status.currentTask.setsGoal[setIndex];
     updateSetsDone(setsDone);
+    console.log(status.nextTask);
     if (setIndex + 1 < setsCount) {
       updateSetIndex(setIndex + 1);
+    } else if (status.nextTask) {
+      updatePageState(WorkoutPageState.EXERCISE_RESULT);
     } else {
-      updatePageState("exercise-result");
+      updatePageState(WorkoutPageState.WORKOUT_DONE);
     }
   }
 
-  if (pageState === "exercise") {
+  const onExerciseResultStateNextClick = () => {
+    continueWorkout(status.workoutStatusId, setsDone).then((status) => {
+      updatePageState(WorkoutPageState.EXERCISE);
+      updateStatus(status);
+      updateSetsDone([]);
+      updateSetIndex(0);
+    });
+  }
+
+  if (pageState === WorkoutPageState.EXERCISE) {
     return <ExerciseState
       startTime={status.startTime}
       title={status.currentTask.exercise.title}
@@ -48,10 +65,15 @@ const WorkoutLivePage: React.FunctionComponent<AllProps> = ({ match }) => {
       setsCount={status.currentTask.setsGoal.length}
       onClick={onExerciseStateNextClick}
     />
-  } else if (pageState === "exercise-result") {
-    return (
-      <div>exercise-result</div>
-    )
+  } else if (pageState === WorkoutPageState.EXERCISE_RESULT) {
+    return <ExerciseResultState
+      startTime={status.startTime}
+      rest={status.rest}
+      currentTask={status.currentTask}
+      setsDone={setsDone}
+      nextTask={status.nextTask}
+      onClick={onExerciseResultStateNextClick}
+    />
   }
 
   return null;

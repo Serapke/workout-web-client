@@ -1,8 +1,15 @@
 import * as React from "react";
 import { Box } from '@material-ui/core';
 
+export enum TimerType {
+  STOPWATCH,
+  TIMER
+}
+
 interface OwnProps {
-  startTime: string
+  date: string;
+  type?: TimerType;
+  onEnd?: () => void;
 }
 
 interface Time {
@@ -11,42 +18,48 @@ interface Time {
   seconds: string;
 }
 
-const formatTwoDigits = (n: number): string => {
-  if (n === 0) {
-    return '';
+const formatTwoDigits = (n: number, hideOnZero: boolean = false): string => {
+  if (hideOnZero && n === 0) {
+    return null;
   }
   return n < 10 ? '0' + n : '' + n;
 }
 
-const Timer = ({ startTime }: OwnProps) => {
-  const calculateTimeSpent = (): Time => {
-    const difference = +new Date() - +new Date(startTime);
-    let timeSpent = { hours: '', minutes: '00', seconds: '00' };
+const Timer = ({ date, type = TimerType.TIMER, onEnd }: OwnProps) => {
+  const calculateDiff = () => {
+    return type === TimerType.TIMER ? +new Date(date) - +new Date() : +new Date() - +new Date(date);
+  }
 
-    if (difference > 0) {
-      timeSpent = {
-        hours: formatTwoDigits(Math.floor((difference / 1000 / 60 / 60) % 24)),
-        minutes: formatTwoDigits(Math.floor((difference / 1000 / 60) % 60)),
-        seconds: formatTwoDigits(Math.floor((difference / 1000) % 60)),
-      };
-    }
 
-    return timeSpent;
-  };
-
-  const [timeSpent, setTimeSpent] = React.useState<Time>(calculateTimeSpent());
+  const [diff, setDiff] = React.useState<number>(calculateDiff());
 
   React.useEffect(() => {
-    let timer = setTimeout(() => {
-      setTimeSpent(calculateTimeSpent());
-    }, 1000);
-    return () => {
-      clearTimeout(timer);
+    let interval = null;
+    if (diff > 0) {
+      interval = setInterval(() => {
+        setDiff(type === TimerType.TIMER ? +new Date(date) - +new Date() : +new Date() - +new Date(date));
+      }, 1000);
+    } else {
+      onEnd();
     }
-  });
+
+    return () => clearInterval(interval);
+  }, [date, diff, type, onEnd]);
+
+  const formatTime = (): string => {
+    if (diff > 0) {
+      let hours = formatTwoDigits(Math.floor((diff / 1000 / 60 / 60) % 24), true);
+      let minutes = formatTwoDigits(Math.floor((diff / 1000 / 60) % 60));
+      let seconds = formatTwoDigits(Math.floor((diff / 1000) % 60));
+
+      return `${hours ? `${hours}:` : ''}${minutes}:${seconds}`;
+    }
+    return '00:00';
+  };
+
 
   return (
-    <Box fontSize={24}>{timeSpent.hours}:{timeSpent.minutes}:{timeSpent.seconds}</Box>
+    <Box fontSize={24}>{formatTime()}</Box>
   )
 }
 

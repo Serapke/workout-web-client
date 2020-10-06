@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Button, makeStyles, createStyles, Theme, Typography, Box } from '@material-ui/core';
 
-import Timer from 'components/timer/timer';
+import Timer, { TimerType } from 'components/timer/timer';
 
 interface OwnProps {
   startTime: string;
@@ -34,9 +34,9 @@ const ExerciseState = ({ startTime, title, goal, currentCountNo, setsCount, onCl
   return (
     <Box display="flex" flexDirection="column" alignItems="center">
       <Box borderRadius={16} bgcolor="secondary.main" py={1.5} px={3}>
-        <Timer startTime={startTime} />
+        <Timer date={startTime} type={TimerType.STOPWATCH} />
       </Box>
-      <Box display="flex" flexDirection="column" alignItems="center" marginTop={20}>
+      <Box display="flex" flexDirection="column" alignItems="center" marginTop={15}>
         <Typography variant="h3" gutterBottom>{goal}</Typography>
         <Typography variant="h4" className={classes.exercise}>{title}</Typography>
         <Typography variant="h6" color="secondary">{currentCountNo}/{setsCount} sets</Typography>

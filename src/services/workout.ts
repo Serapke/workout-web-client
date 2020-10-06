@@ -18,8 +18,14 @@ export const getActiveWorkoutStatus: (id: string) => Promise<WorkoutStatus> = as
   return response.json();
 }
 
-export const continueWorkout: (workoutStatusId: number) => Promise<WorkoutStatus> = async (workoutStatusId) => {
-  const response = await fetch(`${process.env.REACT_APP_API_URL}/workout/continueWorkout?workoutStatusId=${workoutStatusId}`);
+export const continueWorkout: (workoutStatusId: number, sets: number[]) => Promise<WorkoutStatus> = async (workoutStatusId, sets) => {
+  const response = await fetch(`${process.env.REACT_APP_API_URL}/workout/continueWorkout?workoutStatusId=${workoutStatusId}`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(sets),
+  });
   return response.json();
 }
 
