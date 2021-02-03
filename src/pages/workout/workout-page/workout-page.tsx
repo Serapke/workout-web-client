@@ -1,6 +1,6 @@
 import * as React from "react";
 import { connect } from "react-redux";
-import { RouteComponentProps, Link } from "react-router-dom";
+import { RouteComponentProps, Link } from "react-router-dom"
 import { Typography, Button, Box, makeStyles, Theme, createStyles, Chip, Fab } from "@material-ui/core";
 import { Workout } from "../../../store/types";
 import { getWorkout } from "../../../services/workout";

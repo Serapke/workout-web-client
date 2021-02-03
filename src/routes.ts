@@ -7,6 +7,7 @@ import WorkoutPage from "./pages/workout/workout-page";
 import ExerciseSelectPage from "./pages/exercise/exercise-select-page";
 import ExerciseCreatePage from "./pages/exercise/exercise-create-page";
 import WorkoutLivePage from "./pages/workout/workout-live-page";
+import WorkoutResultPage from "./pages/workout/workout-result-page";
 
 export default [
   {
@@ -32,6 +33,10 @@ export default [
       {
         path: "/workout/:id/live",
         component: WorkoutLivePage,
+      },
+      {
+        path: "/workout/:id/result/:result_id",
+        component: WorkoutResultPage,
       },
       {
         path: "/workout/:id",

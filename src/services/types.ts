@@ -7,6 +7,8 @@ export interface ApiResponse {
 }
 
 export interface WorkoutStatus {
+  duration: number;
+  tasks: TaskStatus[];
   workoutStatusId: number;
   currentTask: TaskStatus;
   nextTask: TaskStatus;
@@ -17,6 +19,22 @@ export interface WorkoutStatus {
 }
 
 export interface TaskStatus {
+  id: number;
+  exercise: Exercise;
+  order: number;
+  setsGoal: number[];
+  setsDone: number[];
+}
+
+export interface WorkoutHistory {
+  duration: number;
+  endTime: string;
+  emotion: Emotion;
+  tasks: TaskStatus[];
+  rest: number;
+}
+
+export interface TaskHistory {
   id: number;
   exercise: Exercise;
   order: number;

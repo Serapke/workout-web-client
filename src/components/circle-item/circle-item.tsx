@@ -20,6 +20,10 @@ const sizeMap = {
   large: "48px"
 }
 
+const fontSizeMap = {
+  small: "14px"
+}
+
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     primary: {
@@ -45,6 +49,7 @@ const CircleItem = ({ onClick, color, outlined, children, size = 'small' }: Prop
       width={sizeMap[size]}
       height={sizeMap[size]}
       lineHeight={sizeMap[size]}
+      fontSize={fontSizeMap[size]}
       className={`${classes[color]}${outlined ? ` ${classes.outlined}` : ""}`}
       onClick={onClick}
     >

@@ -3,7 +3,7 @@ import { connect } from "react-redux";
 import { RouteComponentProps } from "react-router-dom";
 
 import { ApplicationState } from "../../../store";
-import { getActiveWorkoutStatus, continueWorkout } from 'services/workout';
+import { getActiveWorkoutStatus, continueWorkout, finishWorkout } from 'services/workout';
 import { WorkoutStatus } from 'services/types';
 import ExerciseState from './exercise-state';
 import ExerciseResultState from './exercise-result-state';
@@ -20,7 +20,7 @@ enum WorkoutPageState {
 
 type AllProps = RouteComponentProps<RouteParams>;
 
-const WorkoutLivePage: React.FunctionComponent<AllProps> = ({ match }) => {
+const WorkoutLivePage: React.FunctionComponent<AllProps> = ({ match, history }) => {
   const [status, updateStatus] = React.useState<WorkoutStatus>();
   const [setIndex, updateSetIndex] = React.useState<number>();
   const [setsDone, updateSetsDone] = React.useState<number[]>([]);
@@ -39,20 +39,24 @@ const WorkoutLivePage: React.FunctionComponent<AllProps> = ({ match }) => {
     updateSetsDone(setsDone);
     if (setIndex + 1 < setsCount) {
       updateSetIndex(setIndex + 1);
-    } else if (status.nextTask) {
-      updatePageState(WorkoutPageState.EXERCISE_RESULT);
     } else {
-      updatePageState(WorkoutPageState.WORKOUT_DONE);
+      updatePageState(WorkoutPageState.EXERCISE_RESULT);
     }
   }
 
   const onExerciseResultStateNextClick = () => {
-    continueWorkout(status.workoutStatusId, setsDone).then((status) => {
-      updatePageState(WorkoutPageState.EXERCISE);
-      updateStatus(status);
-      updateSetsDone([]);
-      updateSetIndex(0);
-    });
+    if (status.nextTask) {
+      continueWorkout(status.workoutStatusId, setsDone).then((status) => {
+        updatePageState(WorkoutPageState.EXERCISE);
+        updateStatus(status);
+        updateSetsDone([]);
+        updateSetIndex(0);
+      });
+    } else {
+      finishWorkout(status.workoutStatusId, setsDone).then(() => {
+        history.push(`/workout/${match.params.id}/result/${status.workoutStatusId}`);
+      })
+    }
   }
 
   if (pageState === WorkoutPageState.EXERCISE) {
