@@ -6,10 +6,7 @@ import CircleItem from 'components/circle-item';
 
 
 interface OwnProps {
-  startTime: string;
   rest: number;
-  currentTask: TaskStatus;
-  setsDone: number[];
   nextTask: TaskStatus;
   paused: boolean;
 }
@@ -27,7 +24,7 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 )
 
-const WorkoutRestState = ({ paused, nextTask }: OwnProps) => {
+const WorkoutRestState = ({ paused, nextTask, rest }: OwnProps) => {
   const classes = useStyles();
 
   return (
@@ -35,7 +32,7 @@ const WorkoutRestState = ({ paused, nextTask }: OwnProps) => {
       {nextTask &&
         <React.Fragment>
           <Box mt={3}>
-            <Timer title="Rest" seconds={5} paused={paused} increaseBy={5} />
+            <Timer title="Rest" seconds={rest} paused={paused} increaseBy={5} />
           </Box>
           <Box display="flex" flexDirection="column" alignItems="center" marginTop={3}>
             <Typography variant="subtitle1" className={classes.nextUp}>Next up</Typography>

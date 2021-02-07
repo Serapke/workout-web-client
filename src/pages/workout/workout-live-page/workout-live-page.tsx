@@ -23,7 +23,6 @@ enum WorkoutPageState {
 type AllProps = RouteComponentProps<RouteParams>;
 
 
-
 const WorkoutLivePage: React.FunctionComponent<AllProps> = ({ match, history }) => {
   const [status, updateStatus] = React.useState<WorkoutStatus>();
   const [setIndex, updateSetIndex] = React.useState<number>();
@@ -77,23 +76,9 @@ const WorkoutLivePage: React.FunctionComponent<AllProps> = ({ match, history }) 
   let stateComponent: JSX.Element;
 
   if (pageState === WorkoutPageState.EXERCISE) {
-    stateComponent = <ExerciseState
-      startTime={status.startTime}
-      title={status.currentTask.exercise.title}
-      goal={status.currentTask.setsGoal[setIndex]}
-      currentCountNo={setIndex + 1}
-      setsCount={status.currentTask.setsGoal.length}
-      onClick={onExerciseStateNextClick}
-    />
+    stateComponent = <ExerciseState task={status.currentTask} setIndex={setIndex} />
   } else {
-    stateComponent = <WorkoutRestState
-      startTime={status.startTime}
-      rest={status.rest}
-      currentTask={status.currentTask}
-      setsDone={setsDone}
-      nextTask={status.nextTask}
-      paused={paused}
-    />
+    stateComponent = <WorkoutRestState rest={status.rest} nextTask={status.nextTask} paused={paused} />
   }
 
   return (
