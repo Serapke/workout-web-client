@@ -1,21 +1,15 @@
 import * as React from "react";
-import { Box } from '@material-ui/core';
+import { Box, Button, Typography } from '@material-ui/core';
 
-export enum TimerType {
-  STOPWATCH,
-  TIMER
-}
+import beep from "./../../sounds/notification_simple-01.wav";
+import completed from "./../../sounds/notification_simple-02.wav";
 
 interface OwnProps {
-  date: string;
-  type?: TimerType;
+  title: string;
+  seconds: number;
+  paused: boolean;
+  increaseBy?: number;
   onEnd?: () => void;
-}
-
-interface Time {
-  hours: string;
-  minutes: string;
-  seconds: string;
 }
 
 const formatTwoDigits = (n: number, hideOnZero: boolean = false): string => {
@@ -25,42 +19,54 @@ const formatTwoDigits = (n: number, hideOnZero: boolean = false): string => {
   return n < 10 ? '0' + n : '' + n;
 }
 
-const Timer = ({ date, type = TimerType.TIMER, onEnd = () => { } }: OwnProps) => {
-  const calculateDiff = () => {
-    return type === TimerType.TIMER ? +new Date(date) - +new Date() : +new Date() - +new Date(date);
+const formatTime = (timeElapsed: number): string => {
+  if (timeElapsed > 0) {
+    let hours = formatTwoDigits(Math.floor((timeElapsed / 60 / 60) % 24), true);
+    let minutes = formatTwoDigits(Math.floor((timeElapsed / 60) % 60));
+    let seconds = formatTwoDigits(Math.floor((timeElapsed) % 60));
+
+    return `${hours ? `${hours}:` : ''}${minutes}:${seconds}`;
   }
+  return '00:00';
+};
 
-
-  const [diff, setDiff] = React.useState<number>(calculateDiff());
+const Timer = ({ title, seconds, paused, increaseBy, onEnd = () => { } }: OwnProps) => {
+  const [value, setValue] = React.useState<number>(seconds);
+  const beepAudio = new Audio(beep);
+  const completedAudio = new Audio(completed);
 
   React.useEffect(() => {
-    let interval = null;
-    if (diff > 0) {
-      interval = setInterval(() => {
-        setDiff(type === TimerType.TIMER ? +new Date(date) - +new Date() : +new Date() - +new Date(date));
+    let intervalId: NodeJS.Timeout;
+
+    if (!paused && value > 0) {
+      intervalId = setInterval(() => {
+        if (value > 1 && value <= 4) {
+          playSound(beepAudio);
+        } else if (value === 1) {
+          playSound(completedAudio);
+        }
+        setValue(prevState => prevState - 1);
       }, 1000);
     } else {
       onEnd();
     }
 
-    return () => clearInterval(interval);
-  }, [date, diff, type, onEnd]);
+    return () => clearInterval(intervalId);
+  }, [paused, value, onEnd, beepAudio, completedAudio]);
 
-  const formatTime = (): string => {
-    if (diff > 0) {
-      let hours = formatTwoDigits(Math.floor((diff / 1000 / 60 / 60) % 24), true);
-      let minutes = formatTwoDigits(Math.floor((diff / 1000 / 60) % 60));
-      let seconds = formatTwoDigits(Math.floor((diff / 1000) % 60));
-
-      return `${hours ? `${hours}:` : ''}${minutes}:${seconds}`;
-    }
-    return '00:00';
+  const playSound = audioFile => {
+    audioFile.play();
   };
 
+  const addTime = () => {
+    setValue(prevState => prevState + increaseBy);
+  }
 
-  return (
-    <Box fontSize={24}>{formatTime()}</Box>
-  )
+  return <Box display="flex" flexDirection="column" alignItems="center" justifyContent="space-evenly" width={200} height={200} borderRadius="50%" border="6px solid" borderColor="secondary.main">
+    <Typography variant="subtitle1">{title}</Typography>
+    <Typography variant="h4">{formatTime(value)}</Typography>
+    {increaseBy && <Button size="large" color="secondary" onClick={addTime}>+{increaseBy}</Button>}
+  </Box>
 }
 
 export default Timer;

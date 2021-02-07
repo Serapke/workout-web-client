@@ -38,7 +38,7 @@ const WorkoutResultPage: React.FunctionComponent<AllProps> = ({ match, history }
       .catch(ex => console.log(ex));
   }, [match.params.result_id]);
 
-  if (!result) return <div>No such workout history exists</div>;
+  if (!result) return <div></div>;
 
   const onEmotionClick = (emotion: Emotion) => {
     if (result.emotion) return;

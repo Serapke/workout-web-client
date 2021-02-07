@@ -6,7 +6,10 @@ import { ApplicationState } from "../../../store";
 import { getActiveWorkoutStatus, continueWorkout, finishWorkout } from 'services/workout';
 import { WorkoutStatus } from 'services/types';
 import ExerciseState from './exercise-state';
-import ExerciseResultState from './exercise-result-state';
+import WorkoutRestState from './workout-rest-state';
+import { Box } from '@material-ui/core';
+import WorkoutTime from './components/workout-time';
+import Button from './components/button';
 
 interface RouteParams {
   id: string;
@@ -14,24 +17,30 @@ interface RouteParams {
 
 enum WorkoutPageState {
   EXERCISE,
-  EXERCISE_RESULT,
-  WORKOUT_DONE
+  REST
 }
 
 type AllProps = RouteComponentProps<RouteParams>;
+
+
 
 const WorkoutLivePage: React.FunctionComponent<AllProps> = ({ match, history }) => {
   const [status, updateStatus] = React.useState<WorkoutStatus>();
   const [setIndex, updateSetIndex] = React.useState<number>();
   const [setsDone, updateSetsDone] = React.useState<number[]>([]);
   const [pageState, updatePageState] = React.useState<WorkoutPageState>(WorkoutPageState.EXERCISE);
+  const [paused, setPaused] = React.useState<boolean>(false);
 
   React.useEffect(() => {
     getActiveWorkoutStatus(match.params.id).then((status) => updateStatus(status));
     updateSetIndex(0);
   }, [match.params.id]);
 
-  if (!status) return <div>Loading...</div>;
+  if (!status) return <div></div>;
+
+  const pauseWorkout = () => {
+    setPaused(prevState => !prevState);
+  }
 
   const onExerciseStateNextClick = () => {
     let setsCount = status.currentTask.setsGoal.length;
@@ -39,19 +48,8 @@ const WorkoutLivePage: React.FunctionComponent<AllProps> = ({ match, history }) 
     updateSetsDone(setsDone);
     if (setIndex + 1 < setsCount) {
       updateSetIndex(setIndex + 1);
-    } else {
-      updatePageState(WorkoutPageState.EXERCISE_RESULT);
-    }
-  }
-
-  const onExerciseResultStateNextClick = () => {
-    if (status.nextTask) {
-      continueWorkout(status.workoutStatusId, setsDone).then((status) => {
-        updatePageState(WorkoutPageState.EXERCISE);
-        updateStatus(status);
-        updateSetsDone([]);
-        updateSetIndex(0);
-      });
+    } else if (status.nextTask) {
+      updatePageState(WorkoutPageState.REST);
     } else {
       finishWorkout(status.workoutStatusId, setsDone).then(() => {
         history.push(`/workout/${match.params.id}/result/${status.workoutStatusId}`);
@@ -59,8 +57,27 @@ const WorkoutLivePage: React.FunctionComponent<AllProps> = ({ match, history }) 
     }
   }
 
+  const onExerciseResultStateNextClick = () => {
+    continueWorkout(status.workoutStatusId, setsDone).then((status) => {
+      updatePageState(WorkoutPageState.EXERCISE);
+      updateStatus(status);
+      updateSetsDone([]);
+      updateSetIndex(0);
+    });
+  }
+
+  const onNextClick = () => {
+    if (pageState === WorkoutPageState.EXERCISE) {
+      onExerciseStateNextClick();
+    } else {
+      onExerciseResultStateNextClick();
+    }
+  }
+
+  let stateComponent: JSX.Element;
+
   if (pageState === WorkoutPageState.EXERCISE) {
-    return <ExerciseState
+    stateComponent = <ExerciseState
       startTime={status.startTime}
       title={status.currentTask.exercise.title}
       goal={status.currentTask.setsGoal[setIndex]}
@@ -68,18 +85,24 @@ const WorkoutLivePage: React.FunctionComponent<AllProps> = ({ match, history }) 
       setsCount={status.currentTask.setsGoal.length}
       onClick={onExerciseStateNextClick}
     />
-  } else if (pageState === WorkoutPageState.EXERCISE_RESULT) {
-    return <ExerciseResultState
+  } else {
+    stateComponent = <WorkoutRestState
       startTime={status.startTime}
       rest={status.rest}
       currentTask={status.currentTask}
       setsDone={setsDone}
       nextTask={status.nextTask}
-      onClick={onExerciseResultStateNextClick}
+      paused={paused}
     />
   }
 
-  return null;
+  return (
+    <Box>
+      <WorkoutTime paused={paused} onPauseClick={pauseWorkout} />
+      {stateComponent}
+      <Button disabled={paused} onClick={onNextClick}>Next</Button>
+    </Box>
+  );
 }
 
 const mapStateToProps = ({ form }: ApplicationState) => ({

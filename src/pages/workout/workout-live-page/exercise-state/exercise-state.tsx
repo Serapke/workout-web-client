@@ -1,7 +1,5 @@
 import * as React from "react";
-import { Button, makeStyles, createStyles, Theme, Typography, Box } from '@material-ui/core';
-
-import Timer, { TimerType } from 'components/timer/timer';
+import { makeStyles, createStyles, Theme, Typography, Box } from '@material-ui/core';
 
 interface OwnProps {
   startTime: string;
@@ -28,22 +26,16 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
-const ExerciseState = ({ startTime, title, goal, currentCountNo, setsCount, onClick }: OwnProps) => {
+const ExerciseState = ({ title, goal, currentCountNo, setsCount }: OwnProps) => {
   const classes = useStyles();
 
   return (
     <Box display="flex" flexDirection="column" alignItems="center">
-      <Box borderRadius={16} bgcolor="secondary.main" py={1.5} px={3}>
-        <Timer date={startTime} type={TimerType.STOPWATCH} />
-      </Box>
       <Box display="flex" flexDirection="column" alignItems="center" marginTop={15}>
         <Typography variant="h3" gutterBottom>{goal}</Typography>
         <Typography variant="h4" className={classes.exercise}>{title}</Typography>
         <Typography variant="h6" color="secondary">{currentCountNo}/{setsCount} sets</Typography>
       </Box>
-      <Button size="large" id="fab" className={classes.cta} color="secondary" variant="contained" type="button" onClick={onClick}>
-        Next
-      </Button>
     </Box>
   )
 }
