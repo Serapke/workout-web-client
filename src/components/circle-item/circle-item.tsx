@@ -20,6 +20,12 @@ const sizeMap = {
   large: "48px"
 }
 
+const lineHeightMap = {
+  small: "28px",
+  medium: "36px",
+  large: "44px"
+}
+
 const fontSizeMap = {
   small: "14px"
 }
@@ -27,15 +33,15 @@ const fontSizeMap = {
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     primary: {
-      color: "white",
-      backgroundColor: theme.palette.primary.main,
+      color: "#777",
+      backgroundColor: "white",
     },
     secondary: {
       color: "black",
       backgroundColor: theme.palette.secondary.main,
     },
     outlined: {
-      border: "1px solid #707070;",
+      border: "2px solid #707070;",
     },
   })
 );
@@ -48,7 +54,7 @@ const CircleItem = ({ onClick, color, outlined, children, size = 'small' }: Prop
       textAlign="center"
       width={sizeMap[size]}
       height={sizeMap[size]}
-      lineHeight={sizeMap[size]}
+      lineHeight={outlined ? lineHeightMap[size] : sizeMap[size]}
       fontSize={fontSizeMap[size]}
       className={`${classes[color]}${outlined ? ` ${classes.outlined}` : ""}`}
       onClick={onClick}

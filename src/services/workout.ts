@@ -46,6 +46,12 @@ export const updateWorkoutEmotion: (workoutStatusId: number, emotion: Emotion) =
   });
 }
 
+export const updateWorkoutDuration: (workoutStatusId: number, durationInSeconds: number) => Promise<any> = async (workoutStatusId, durationInSeconds) => {
+  return fetch(`${process.env.REACT_APP_API_URL}/workout/updateDuration?workoutStatusId=${workoutStatusId}&durationInSeconds=${durationInSeconds}`, {
+    method: "POST"
+  });
+}
+
 export const createWorkout: (workout: Workout) => Promise<ApiResponse> = async (workout) => {
   const response = await fetch(`${process.env.REACT_APP_API_URL}/workout/create`, {
     method: "POST",

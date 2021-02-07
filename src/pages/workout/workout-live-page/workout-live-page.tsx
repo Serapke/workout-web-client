@@ -3,9 +3,9 @@ import { connect } from "react-redux";
 import { RouteComponentProps } from "react-router-dom";
 
 import { ApplicationState } from "../../../store";
-import { getActiveWorkoutStatus, continueWorkout, finishWorkout } from 'services/workout';
+import { getActiveWorkoutStatus, continueWorkout, finishWorkout, updateWorkoutDuration } from 'services/workout';
 import { WorkoutStatus } from 'services/types';
-import ExerciseState from './exercise-state';
+import ExerciseState from './workout-exercise-state';
 import WorkoutRestState from './workout-rest-state';
 import { Box } from '@material-ui/core';
 import WorkoutTime from './components/workout-time';
@@ -29,6 +29,7 @@ const WorkoutLivePage: React.FunctionComponent<AllProps> = ({ match, history }) 
   const [setsDone, updateSetsDone] = React.useState<number[]>([]);
   const [pageState, updatePageState] = React.useState<WorkoutPageState>(WorkoutPageState.EXERCISE);
   const [paused, setPaused] = React.useState<boolean>(false);
+  const [duration, setDuration] = React.useState<number>();
 
   React.useEffect(() => {
     getActiveWorkoutStatus(match.params.id).then((status) => updateStatus(status));
@@ -41,6 +42,14 @@ const WorkoutLivePage: React.FunctionComponent<AllProps> = ({ match, history }) 
     setPaused(prevState => !prevState);
   }
 
+  const updateDuration = (duration: number) => {
+    if (duration !== 0 && duration % 10 === 0) {
+      updateWorkoutDuration(status.workoutStatusId, duration);
+    } else {
+      setDuration(duration);
+    }
+  }
+
   const onExerciseStateNextClick = () => {
     let setsCount = status.currentTask.setsGoal.length;
     setsDone[setIndex] = status.currentTask.setsGoal[setIndex];
@@ -50,6 +59,7 @@ const WorkoutLivePage: React.FunctionComponent<AllProps> = ({ match, history }) 
     } else if (status.nextTask) {
       updatePageState(WorkoutPageState.REST);
     } else {
+      updateWorkoutDuration(status.workoutStatusId, duration);
       finishWorkout(status.workoutStatusId, setsDone).then(() => {
         history.push(`/workout/${match.params.id}/result/${status.workoutStatusId}`);
       })
@@ -76,16 +86,16 @@ const WorkoutLivePage: React.FunctionComponent<AllProps> = ({ match, history }) 
   let stateComponent: JSX.Element;
 
   if (pageState === WorkoutPageState.EXERCISE) {
-    stateComponent = <ExerciseState task={status.currentTask} setIndex={setIndex} />
+    stateComponent = <ExerciseState task={status.currentTask} setIndex={setIndex} paused={paused} />
   } else {
     stateComponent = <WorkoutRestState rest={status.rest} nextTask={status.nextTask} paused={paused} />
   }
 
   return (
     <Box>
-      <WorkoutTime paused={paused} onPauseClick={pauseWorkout} />
+      <WorkoutTime duration={status.duration} paused={paused} onPauseClick={pauseWorkout} updateDuration={updateDuration} />
       {stateComponent}
-      <Button disabled={paused} onClick={onNextClick}>Next</Button>
+      <Button disabled={paused} onClick={onNextClick}>{status.nextTask ? `Next` : `Finish`}</Button>
     </Box>
   );
 }

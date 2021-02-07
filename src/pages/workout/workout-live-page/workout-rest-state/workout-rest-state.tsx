@@ -3,6 +3,7 @@ import { Box, Typography, makeStyles, Theme, createStyles } from '@material-ui/c
 import Timer from 'components/timer';
 import { TaskStatus } from 'services/types';
 import CircleItem from 'components/circle-item';
+import { exerciseTypeToLetter } from 'utils/common';
 
 
 interface OwnProps {
@@ -28,23 +29,19 @@ const WorkoutRestState = ({ paused, nextTask, rest }: OwnProps) => {
   const classes = useStyles();
 
   return (
-    <Box display="flex" flexDirection="column" alignItems="center">
-      {nextTask &&
-        <React.Fragment>
-          <Box mt={3}>
-            <Timer title="Rest" seconds={rest} paused={paused} increaseBy={5} />
+    <Box display="flex" flexDirection="column" alignItems="center" mt={3}>
+      <Box display="flex" flexDirection="column" alignItems="center" justifyContent="space-evenly" width={200} height={200} borderRadius="50%" border="6px solid" borderColor="secondary.main">
+        <Timer title="Rest" seconds={rest} paused={paused} increaseBy={5} />
+      </Box>
+      <Box display="flex" flexDirection="column" alignItems="center" marginTop={3}>
+        <Typography variant="subtitle1" className={classes.nextUp}>Next up</Typography>
+        <Box display="flex" flexDirection="column" alignItems="center" mt={2}>
+          <Typography variant="h4">{nextTask.exercise.title}</Typography>
+          <Box display="flex" mt={1} className={classes.setBox}>
+            {nextTask.setsGoal.map((setGoal, sIndex) => <CircleItem key={`set-goal-${sIndex}`} size="medium" color="secondary">{setGoal}{exerciseTypeToLetter(nextTask.exercise.type)}</CircleItem>)}
           </Box>
-          <Box display="flex" flexDirection="column" alignItems="center" marginTop={3}>
-            <Typography variant="subtitle1" className={classes.nextUp}>Next up</Typography>
-            <Box display="flex" flexDirection="column" alignItems="center" mt={2}>
-              <Typography variant="h4">{nextTask.exercise.title}</Typography>
-              <Box display="flex" mt={1} className={classes.setBox}>
-                {nextTask.setsGoal.map((setGoal, sIndex) => <CircleItem key={`set-goal-${sIndex}`} color="secondary">{setGoal}{nextTask.exercise.type === "TIMED" ? "s" : "x"}</CircleItem>)}
-              </Box>
-            </Box>
-          </Box>
-        </React.Fragment>
-      }
+        </Box>
+      </Box>
     </Box>
   )
 }

@@ -1,11 +1,11 @@
 import * as React from "react";
-import { Box, Button, Typography } from '@material-ui/core';
+import { Button, Typography } from '@material-ui/core';
 
 import beep from "./../../sounds/notification_simple-01.wav";
 import completed from "./../../sounds/notification_simple-02.wav";
 
 interface OwnProps {
-  title: string;
+  title?: string;
   seconds: number;
   paused: boolean;
   increaseBy?: number;
@@ -62,11 +62,13 @@ const Timer = ({ title, seconds, paused, increaseBy, onEnd = () => { } }: OwnPro
     setValue(prevState => prevState + increaseBy);
   }
 
-  return <Box display="flex" flexDirection="column" alignItems="center" justifyContent="space-evenly" width={200} height={200} borderRadius="50%" border="6px solid" borderColor="secondary.main">
-    <Typography variant="subtitle1">{title}</Typography>
-    <Typography variant="h4">{formatTime(value)}</Typography>
-    {increaseBy && <Button size="large" color="secondary" onClick={addTime}>+{increaseBy}</Button>}
-  </Box>
+  return (
+    <React.Fragment>
+      {title && <Typography variant="subtitle1">{title}</Typography>}
+      <Typography variant="h4">{formatTime(value)}</Typography>
+      {increaseBy && <Button size="large" color="secondary" onClick={addTime}>+{increaseBy}</Button>}
+    </React.Fragment>
+  )
 }
 
 export default Timer;

@@ -1,14 +1,37 @@
-import { Box } from '@material-ui/core';
+import { Box, makeStyles, Theme, createStyles } from '@material-ui/core';
 import React from 'react';
 
 interface OwnProps {
+  startCounter?: number;
   paused: boolean;
+  format?: boolean;
+  doOnEverySecond?: (duration: number) => void;
 }
 
 interface Time {
   timeString: string;
   counter: number;
 }
+
+const useStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    '@keyframes flicker': {
+      from: {
+        opacity: 1,
+      },
+      to: {
+        opacity: 0,
+      },
+    },
+    flicker: {
+      animationName: '$flicker',
+      animationDuration: '700ms',
+      animationIterationCount: 'infinite',
+      animationDirection: 'alternate',
+      animationTimingFunction: 'linear',
+    },
+  })
+)
 
 const formatTwoDigits = (n: number, hideOnZero: boolean = false): string => {
   if (hideOnZero && n === 0) {
@@ -28,8 +51,9 @@ const formatTime = (timeElapsed: number): string => {
   return '00:00';
 };
 
-const Stopwatch = ({ paused }: OwnProps) => {
-  const [time, setTime] = React.useState<Time>({ timeString: '00:00', counter: 0 });
+const Stopwatch = ({ startCounter = 0, paused, doOnEverySecond, format = true }: OwnProps) => {
+  const classes = useStyles();
+  const [time, setTime] = React.useState<Time>({ timeString: format ? formatTime(startCounter) : `${startCounter}`, counter: startCounter });
 
   React.useEffect(() => {
     let intervalId: NodeJS.Timeout;
@@ -37,17 +61,20 @@ const Stopwatch = ({ paused }: OwnProps) => {
     if (!paused) {
       intervalId = setInterval(() => {
         setTime(prevState => ({
-          timeString: formatTime(prevState.counter + 1),
+          timeString: format ? formatTime(prevState.counter + 1) : `${prevState.counter + 1}`,
           counter: prevState.counter + 1
         }))
       }, 1000)
+      if (doOnEverySecond) {
+        doOnEverySecond(time.counter);
+      }
     }
 
     return () => clearInterval(intervalId);
-  }, [paused, time]);
+  }, [doOnEverySecond, format, paused, time]);
 
   return (
-    <Box fontSize={20} borderRadius={4} bgcolor="secondary.main" py={1} px={1.5} width="fit-content" height="fit-content">{time.timeString}</Box>
+    <Box className={paused ? classes.flicker : ''}>{time.timeString}</Box>
   );
 }
 
