@@ -63,12 +63,16 @@ const HistoryPage: React.FunctionComponent<AllProps> = ({ history }) => {
       <Timeline classes={{ root: classes.timeline }}>
         {
           workoutHistory.map(item => {
-            const date = item.endTime.split(" ");
+            const date = item.endTime ? item.endTime.split(" ") : null;
             return (
               <TimelineItem key={item.id}>
                 <TimelineOppositeContent classes={{ root: classes.timelineOppositeContent }}>
-                  <Typography classes={{ root: classes.day }}>{date[0]}</Typography>
-                  <Typography classes={{ root: classes.month }}>{date[1].toUpperCase()}</Typography>
+                  {date && (
+                    <React.Fragment>
+                      <Typography classes={{ root: classes.day }}>{date[0]}</Typography>
+                      <Typography classes={{ root: classes.month }}>{date[1].toUpperCase()}</Typography>
+                    </React.Fragment>
+                  )}
                 </TimelineOppositeContent>
                 <TimelineSeparator classes={{ root: classes.timelineSeparator }}>
                   <TimelineConnector />
