@@ -2,7 +2,6 @@ import * as React from "react";
 import { connect } from "react-redux";
 import { RouteComponentProps } from "react-router-dom";
 
-import { ApplicationState } from "../../../store";
 import { getActiveWorkoutStatus, continueWorkout, finishWorkout, updateWorkoutDuration } from 'services/workout';
 import { WorkoutStatus } from 'services/types';
 import ExerciseState from './workout-exercise-state';
@@ -100,10 +99,7 @@ const WorkoutLivePage: React.FunctionComponent<AllProps> = ({ match, history }) 
   );
 }
 
-const mapStateToProps = ({ form }: ApplicationState) => ({
-  form: form.workout.form,
-  id: form.workout.id,
-});
+const mapStateToProps = () => ({});
 
 const mapDispatchToProps = {};
 

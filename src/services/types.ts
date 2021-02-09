@@ -27,6 +27,9 @@ export interface TaskStatus {
 }
 
 export interface WorkoutHistory {
+  id: number;
+  title: string;
+  workoutId: number;
   duration: number;
   endTime: string;
   emotion: Emotion;

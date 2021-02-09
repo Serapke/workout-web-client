@@ -8,6 +8,7 @@ import ExerciseSelectPage from "./pages/exercise/exercise-select-page";
 import ExerciseCreatePage from "./pages/exercise/exercise-create-page";
 import WorkoutLivePage from "./pages/workout/workout-live-page";
 import WorkoutResultPage from "./pages/workout/workout-result-page";
+import HistoryPage from 'pages/history';
 
 export default [
   {
@@ -21,6 +22,10 @@ export default [
       {
         path: "/favorites",
         component: FavoritesPage,
+      },
+      {
+        path: "/history",
+        component: HistoryPage,
       },
       {
         path: "/workout/create",

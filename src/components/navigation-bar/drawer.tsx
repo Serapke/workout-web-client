@@ -1,6 +1,6 @@
 import * as React from "react";
 import { SwipeableDrawer, List, ListItem, ListItemIcon, ListItemText, makeStyles } from "@material-ui/core";
-import { Home, Favorite } from "@material-ui/icons";
+import { Home, Favorite, History } from "@material-ui/icons";
 import { Link, LinkProps } from "react-router-dom";
 
 interface OwnProps {
@@ -39,6 +39,12 @@ const Drawer = ({ open, onOpen, onClose }: OwnProps) => {
               <Favorite />
             </ListItemIcon>
             <ListItemText className={classes.listItemText} primary="Favorites" />
+          </ListItem>
+          <ListItem key="History" component={AdapterLink} to="/history">
+            <ListItemIcon>
+              <History />
+            </ListItemIcon>
+            <ListItemText className={classes.listItemText} primary="History" />
           </ListItem>
         </List>
       </div>

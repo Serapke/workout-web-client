@@ -1,5 +1,10 @@
 import { WorkoutHistory } from './types';
 
+export const getWorkoutHistories: () => Promise<WorkoutHistory[]> = async () => {
+  const response = await fetch(`${process.env.REACT_APP_API_URL}/workout-history`).then(checkStatus);
+  return response.json();
+}
+
 export const getWorkoutHistory: (id: string) => Promise<WorkoutHistory> = async (id) => {
   const response = await fetch(`${process.env.REACT_APP_API_URL}/workout-history/${id}`).then(checkStatus);
   return response.json();
