@@ -3,6 +3,7 @@ import { Button, Typography } from '@material-ui/core';
 
 import beep from "./../../sounds/notification_simple-01.wav";
 import completed from "./../../sounds/notification_simple-02.wav";
+import useTimer from 'hooks/useTimer';
 
 interface OwnProps {
   title?: string;
@@ -35,26 +36,29 @@ const Timer = ({ title, seconds, paused, increaseBy, onEnd = () => { } }: OwnPro
   const beepAudio = new Audio(beep);
   const completedAudio = new Audio(completed);
 
-  React.useEffect(() => {
-    let intervalId: NodeJS.Timeout;
-
-    if (!paused && value > 0) {
-      intervalId = setInterval(() => {
-        if (value > 1 && value <= 4) {
-          playSound(beepAudio);
-        } else if (value === 1) {
-          playSound(completedAudio);
-        }
-        setValue(prevState => prevState - 1);
-      }, 1000);
-    } else {
-      onEnd();
+  const { pause, resume, stop } = useTimer({
+    delay: 1000, startImmediately: true, callback: () => {
+      if (value > 1 && value <= 4) {
+        playSound(beepAudio);
+      } else if (value === 1) {
+        playSound(completedAudio);
+      } else if (value === 0) {
+        stop();
+        onEnd();
+      }
+      setValue(prevState => prevState - 1);
     }
+  });
 
-    return () => clearInterval(intervalId);
-  }, [paused, value, onEnd, beepAudio, completedAudio]);
+  React.useEffect(() => {
+    if (paused) {
+      pause();
+    } else {
+      resume();
+    }
+  }, [pause, paused, resume]);
 
-  const playSound = audioFile => {
+  const playSound = (audioFile: HTMLAudioElement) => {
     audioFile.play();
   };
 
