@@ -94,7 +94,7 @@ export default function useTimer(options: TimerOptions) {
   React.useEffect(() => {
     let timeout: NodeJS.Timeout;
 
-    if (options.delay && !isPaused()) {
+    if (options.delay && !isPaused() && isStarted()) {
       if (now >= nextFireTime) {
         options.callback();
         setPeriodElapsedPauseTime(0);
@@ -117,7 +117,7 @@ export default function useTimer(options: TimerOptions) {
     return () => {
       clearTimeout(timeout);
     };
-  }, [isPaused, nextFireTime, now, options, options.delay, stop])
+  }, [now, nextFireTime, options.runOnce, options.delay, pauseTime, stop, isPaused, options, isStarted])
 
   React.useEffect(() => {
     if (firstRun) {

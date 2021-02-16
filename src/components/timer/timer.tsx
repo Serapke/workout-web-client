@@ -32,7 +32,8 @@ const formatTime = (timeElapsed: number): string => {
 };
 
 const Timer = ({ title, seconds, paused, increaseBy, onEnd = () => { } }: OwnProps) => {
-  const [value, setValue] = React.useState<number>(seconds);
+  const [value, setValue] = React.useState<number>();
+
   const beepAudio = new Audio(beep);
   const completedAudio = new Audio(completed);
 
@@ -49,6 +50,10 @@ const Timer = ({ title, seconds, paused, increaseBy, onEnd = () => { } }: OwnPro
       setValue(prevState => prevState - 1);
     }
   });
+
+  React.useEffect(() => {
+    setValue(seconds);
+  }, [seconds])
 
   React.useEffect(() => {
     if (paused) {
