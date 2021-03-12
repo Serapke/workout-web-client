@@ -34,13 +34,13 @@ const ExerciseState = ({ task, setIndex, paused }: OwnProps) => {
         <Box border="6px solid" borderColor="secondary.main" borderRadius="50%" p={4}>
           <FitnessCenter style={{ fontSize: 100 }} />
         </Box>
-        {task.exercise.type === "TIMED" && <Box mt={1}><Timer seconds={task.setsGoal[setIndex]} paused={paused} /></Box>}
+        {task.exercise.measurementType === "TIMED" && <Box mt={1}><Timer seconds={task.setsGoal[setIndex]} paused={paused} /></Box>}
       </Box>
       <Box display="flex" flexDirection="column" alignItems="center" mt={3}>
-        <Typography variant="h5" gutterBottom>{task.setsGoal[setIndex]} {exerciseTypeToWord(task.exercise.type, task.setsGoal[setIndex])}</Typography>
+        <Typography variant="h5" gutterBottom>{task.setsGoal[setIndex]} {exerciseTypeToWord(task.exercise.measurementType, task.setsGoal[setIndex])}</Typography>
         <Typography variant="h4" className={classes.exercise}>{task.exercise.title}</Typography>
         <Box display="flex" mt={1} className={classes.setBox}>
-          {task.setsGoal.map((setGoal, sIndex) => <CircleItem key={`set-goal-${sIndex}`} size="medium" color={sIndex < setIndex ? "secondary" : "primary"} outlined={sIndex >= setIndex}>{setGoal}{exerciseTypeToLetter(task.exercise.type)}</CircleItem>)}
+          {task.setsGoal.map((setGoal, sIndex) => <CircleItem key={`set-goal-${sIndex}`} size="medium" color={sIndex < setIndex ? "secondary" : "primary"} outlined={sIndex >= setIndex}>{setGoal}{exerciseTypeToLetter(task.exercise.measurementType)}</CircleItem>)}
         </Box>
       </Box>
     </Box >

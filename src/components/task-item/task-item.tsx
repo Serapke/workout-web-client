@@ -90,7 +90,7 @@ const TaskItem: React.FC<OwnProps> = ({
                 {task.sets.map((set, sIndex) => (
                   <CircleItem key={sIndex} color="secondary" outlined onClick={(e) => onSet(e, sIndex)}>
                     {set}
-                    {task.exercise.type === "TIMED" ? "s" : "x"}
+                    {task.exercise.measurementType === "TIMED" ? "s" : "x"}
                   </CircleItem>
                 ))}
                 {editable && (

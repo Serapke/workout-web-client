@@ -43,7 +43,7 @@ export const updateTaskRequest = (task: Task): AppThunk => async (dispatch, getS
 
 const mapExerciseIDToTask = (exerciseID: string, state: ApplicationState): Task => {
   const exercise = state.content.exercises.find((exercise) => exercise.id === exerciseID);
-  return { id: null, exercise: exercise, sets: [exercise.defaultReps] };
+  return { id: null, exercise: exercise, sets: [exercise.defaultQuantity] };
 };
 
 const reindexTasks = (task: Task, index: number) => {

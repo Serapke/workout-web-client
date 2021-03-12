@@ -38,7 +38,7 @@ const WorkoutRestState = ({ paused, nextTask, rest }: OwnProps) => {
         <Box display="flex" flexDirection="column" alignItems="center" mt={2}>
           <Typography variant="h4">{nextTask.exercise.title}</Typography>
           <Box display="flex" mt={1} className={classes.setBox}>
-            {nextTask.setsGoal.map((setGoal, sIndex) => <CircleItem key={`set-goal-${sIndex}`} size="medium" color="secondary">{setGoal}{exerciseTypeToLetter(nextTask.exercise.type)}</CircleItem>)}
+            {nextTask.setsGoal.map((setGoal, sIndex) => <CircleItem key={`set-goal-${sIndex}`} size="medium" color="secondary">{setGoal}{exerciseTypeToLetter(nextTask.exercise.measurementType)}</CircleItem>)}
           </Box>
         </Box>
       </Box>

@@ -72,8 +72,8 @@ const formToExercise = (form: FormState): Exercise => ({
   title: form.title.value,
   description: form.description.value,
   bodyParts: form.bodyParts.value,
-  defaultReps: form.defaultReps.value,
-  type: form.type.value === "Repetitions" ? "QUANTITATIVE" : "TIMED",
+  defaultQuantity: form.defaultReps.value,
+  measurementType: form.type.value === "Repetitions" ? "QUANTITATIVE" : "TIMED",
 });
 
 const ExerciseCreatePage = ({ bodyParts, match, history, fetchBodyParts }: OwnProps) => {
@@ -185,7 +185,7 @@ const ExerciseCreatePage = ({ bodyParts, match, history, fetchBodyParts }: OwnPr
           <TextField
             id="defaultReps"
             name="defaultReps"
-            label="Default number of"
+            label="Quantity"
             type="number"
             value={form.defaultReps.value}
             error={!!form.defaultReps.errorMessage}

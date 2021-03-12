@@ -22,8 +22,8 @@ export interface Exercise {
   title: string;
   description: string;
   bodyParts: BodyPart[];
-  defaultReps: number;
-  type: "TIMED" | "QUANTITATIVE";
+  defaultQuantity: number;
+  measurementType: "TIMED" | "QUANTITATIVE";
 }
 
 export type BodyPart = "SHOULDERS" | "ARMS" | "CHEST" | "ABS" | "BACK" | "BUTT" | "LEGS";

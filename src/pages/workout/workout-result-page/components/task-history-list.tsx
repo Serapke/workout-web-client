@@ -40,7 +40,7 @@ const TaskHistoryList = ({ tasks }: OwnProps) => {
                   <Box display="flex" mt={0.5} className={classes.setBox}>
                     {task.setsDone.map((set, sIndex) => (
                       <CircleItem key={sIndex} color="secondary">
-                        {set}{task.exercise.type === "TIMED" ? "s" : "x"}
+                        {set}{task.exercise.measurementType === "TIMED" ? "s" : "x"}
                       </CircleItem>
                     ))}
                   </Box>
