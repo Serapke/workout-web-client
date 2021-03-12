@@ -73,3 +73,9 @@ export const updateWorkout: (workout: Workout) => Promise<ApiResponse> = async (
   });
   return response.json();
 };
+
+export const deleteWorkout: (id: string) => Promise<any> = async (id) => {
+  fetch(`${process.env.REACT_APP_API_URL}/workout/${id}`, {
+    method: 'DELETE'
+  });
+}

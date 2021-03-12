@@ -3,9 +3,10 @@ import { connect } from "react-redux";
 import { RouteComponentProps, Link } from "react-router-dom"
 import { Typography, Button, Box, makeStyles, Theme, createStyles, Chip, Fab } from "@material-ui/core";
 import { Workout } from "../../../store/types";
-import { getWorkout } from "../../../services/workout";
+import { getWorkout, deleteWorkout } from "../../../services/workout";
 import TaskList from "../../../components/task-list";
 import { ApplicationState } from "../../../store";
+import { Edit, Delete } from '@material-ui/icons';
 
 interface RouteParams {
   id: string;
@@ -45,13 +46,21 @@ const WorkoutPage: React.FunctionComponent<AllProps> = ({ match, history }) => {
     history.push(`/workout/${match.params.id}/live`);
   }
 
+  const onDeleteClick = () => {
+    deleteWorkout(match.params.id);
+    history.push('/favorites');
+  }
+
   return (
     <div>
       <Box className={classes.header} display="flex" alignItems="center" justifyContent="space-between">
         <Typography variant="h4">{workout.title}</Typography>
         <Box>
-          <Button color="secondary" component={Link} to={`/workout/${match.params.id}/edit`}>
-            EDIT WORKOUT
+          <Button color="secondary" component={Link} to={`/workout/${match.params.id}/edit`} startIcon={<Edit />}>
+            EDIT
+          </Button>
+          <Button color="secondary" onClick={onDeleteClick} startIcon={<Delete />}>
+            DELETE
           </Button>
         </Box>
       </Box>
