@@ -119,7 +119,7 @@ const ExerciseSelectPage = ({
 
   const filteredExercises = exercises.filter((exercise) => {
     const bodyPartFilter = selectedBodyParts.every((bodyPart) => exercise.bodyParts.includes(bodyPart));
-    const searchQueryFilter = !searchQuery.length || exercise.title.toLowerCase().startsWith(searchQuery.toLowerCase());
+    const searchQueryFilter = !searchQuery.length || exercise.title.toLowerCase().includes(searchQuery.toLowerCase());
     return bodyPartFilter && searchQueryFilter;
   });
 
@@ -178,8 +178,8 @@ const ExerciseSelectPage = ({
             />
           ))
         ) : (
-          <EmptyState primaryText="No exercises matched your search." />
-        )}
+            <EmptyState primaryText="No exercises matched your search." />
+          )}
       </List>
       <Button id="fab" className={classes.fab} color="secondary" variant="contained" onClick={onSelect}>
         Select
