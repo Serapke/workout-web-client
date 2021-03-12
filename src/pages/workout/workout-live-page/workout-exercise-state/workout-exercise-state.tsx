@@ -1,7 +1,7 @@
 import * as React from "react";
 import { makeStyles, createStyles, Typography, Box } from '@material-ui/core';
 import { TaskStatus } from 'services/types';
-import { exerciseTypeToWord, exerciseTypeToLetter } from 'utils/common';
+import { exerciseTypeToWord, exerciseMeasurementTypeToLetter } from 'utils/common';
 import { FitnessCenter } from '@material-ui/icons';
 import CircleItem from 'components/circle-item';
 import Timer from 'components/timer';
@@ -40,7 +40,15 @@ const ExerciseState = ({ task, setIndex, paused }: OwnProps) => {
         <Typography variant="h5" gutterBottom>{task.setsGoal[setIndex]} {exerciseTypeToWord(task.exercise.measurementType, task.setsGoal[setIndex])}</Typography>
         <Typography variant="h4" className={classes.exercise}>{task.exercise.title}</Typography>
         <Box display="flex" mt={1} className={classes.setBox}>
-          {task.setsGoal.map((setGoal, sIndex) => <CircleItem key={`set-goal-${sIndex}`} size="medium" color={sIndex < setIndex ? "secondary" : "primary"} outlined={sIndex >= setIndex}>{setGoal}{exerciseTypeToLetter(task.exercise.measurementType)}</CircleItem>)}
+          {task.setsGoal.map((setGoal, sIndex) =>
+            <CircleItem
+              key={`set-goal-${sIndex}`}
+              size="medium"
+              color={sIndex < setIndex ? "secondary" : "primary"}
+              outlined={sIndex >= setIndex}>
+              {setGoal}{exerciseMeasurementTypeToLetter(task.exercise.measurementType)}
+            </CircleItem>
+          )}
         </Box>
       </Box>
     </Box >

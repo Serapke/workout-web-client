@@ -4,9 +4,9 @@ import { RouteComponentProps, Link } from "react-router-dom"
 import { Typography, Button, Box, makeStyles, Theme, createStyles, Chip, Fab } from "@material-ui/core";
 import { Workout } from "../../../store/types";
 import { getWorkout, deleteWorkout } from "../../../services/workout";
-import TaskList from "../../../components/task-list";
 import { ApplicationState } from "../../../store";
 import { Edit, Delete } from '@material-ui/icons';
+import TaskList from './components/task-list';
 
 interface RouteParams {
   id: string;

@@ -6,7 +6,7 @@ import { connect } from "react-redux";
 
 import { RouteComponentProps } from "react-router-dom";
 import { fetchBodyPartsRequest } from "../../../store/content/thunks";
-import { Exercise } from "../../../store/types";
+import { Exercise, MeasurementType } from "../../../store/types";
 import { ApplicationState } from "../../../store";
 import { fabKeyboardStyles, onInputFocusHideFab, onInputBlurShowFab } from "../../../utils/ui-utils";
 import { capitalizeWord } from "../../../utils/text-utils";
@@ -73,7 +73,7 @@ const formToExercise = (form: FormState): Exercise => ({
   description: form.description.value,
   bodyParts: form.bodyParts.value,
   defaultQuantity: form.defaultReps.value,
-  measurementType: form.type.value === "Repetitions" ? "QUANTITATIVE" : "TIMED",
+  measurementType: form.type.value === "Repetitions" ? MeasurementType.QUANTITATIVE : MeasurementType.TIMED,
 });
 
 const ExerciseCreatePage = ({ bodyParts, match, history, fetchBodyParts }: OwnProps) => {

@@ -13,6 +13,7 @@ import { Draggable } from "react-beautiful-dnd";
 import TaskItemMenu from "./task-item-menu";
 import { Task } from "../../store/types";
 import CircleItem from "../circle-item";
+import { exerciseMeasurementTypeToLetter } from 'utils/common';
 
 interface OwnProps {
   index: number;
@@ -90,7 +91,7 @@ const TaskItem: React.FC<OwnProps> = ({
                 {task.sets.map((set, sIndex) => (
                   <CircleItem key={sIndex} color="secondary" outlined onClick={(e) => onSet(e, sIndex)}>
                     {set}
-                    {task.exercise.measurementType === "TIMED" ? "s" : "x"}
+                    {exerciseMeasurementTypeToLetter(task.exercise.measurementType)}
                   </CircleItem>
                 ))}
                 {editable && (

@@ -23,7 +23,12 @@ export interface Exercise {
   description: string;
   bodyParts: BodyPart[];
   defaultQuantity: number;
-  measurementType: "TIMED" | "QUANTITATIVE";
+  measurementType: MeasurementType;
+}
+
+export enum MeasurementType {
+  TIMED = "TIMED",
+  QUANTITATIVE = "QUANTITATIVE"
 }
 
 export type BodyPart = "SHOULDERS" | "ARMS" | "CHEST" | "ABS" | "BACK" | "BUTT" | "LEGS";
