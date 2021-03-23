@@ -129,6 +129,7 @@ export default function useTimer(options: TimerOptions) {
   }, [firstRun, options.startImmediately, start]);
 
   return {
+    start,
     pause,
     resume,
     stop,

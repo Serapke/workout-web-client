@@ -3,9 +3,8 @@ import { connect } from "react-redux";
 import { RouteComponentProps } from "react-router-dom"
 import { Typography, Box } from '@material-ui/core';
 import { WorkoutHistory, Emotion } from 'services/types';
-import { getWorkoutHistory } from 'services/workout-history';
+import { getWorkoutHistory, updateWorkoutEmotion } from 'services/workout-history';
 import EmotionSelector from './components/emotion-selector';
-import { updateWorkoutEmotion } from 'services/workout';
 import TaskHistoryList from './components/task-history-list';
 
 interface RouteParams {

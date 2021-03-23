@@ -38,7 +38,7 @@ const TaskHistoryList = ({ tasks }: OwnProps) => {
                 </ListItemAvatar>
                 <ListItemText disableTypography primary={task.exercise.title} secondary={
                   <Box display="flex" mt={0.5} className={classes.setBox}>
-                    {task.setsDone.map((set, sIndex) => (
+                    {task.setsDone && task.setsDone.map((set, sIndex) => (
                       <CircleItem key={sIndex} color="secondary">
                         {set}{task.exercise.measurementType === "TIMED" ? "s" : "x"}
                       </CircleItem>

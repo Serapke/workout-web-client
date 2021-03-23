@@ -34,15 +34,12 @@ const formatTime = (timeElapsed: number): string => {
 const Timer = ({ title, seconds, paused, increaseBy, onEnd = () => { } }: OwnProps) => {
   const [value, setValue] = React.useState<number>();
 
-  const beepAudio = new Audio(beep);
-  const completedAudio = new Audio(completed);
-
-  const { pause, resume, stop } = useTimer({
+  const { start, pause, resume, stop } = useTimer({
     delay: 1000, startImmediately: true, callback: () => {
       if (value > 1 && value <= 4) {
-        playSound(beepAudio);
+        playSound(new Audio(beep));
       } else if (value === 1) {
-        playSound(completedAudio);
+        playSound(new Audio(completed));
       } else if (value === 0) {
         stop();
         onEnd();
@@ -69,6 +66,10 @@ const Timer = ({ title, seconds, paused, increaseBy, onEnd = () => { } }: OwnPro
 
   const addTime = () => {
     setValue(prevState => prevState + increaseBy);
+    console.log(value);
+    if (value <= 0) {
+      start();
+    }
   }
 
   return (

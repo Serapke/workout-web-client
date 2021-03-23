@@ -5,6 +5,7 @@ import { exerciseTypeToWord, exerciseMeasurementTypeToLetter } from 'utils/commo
 import { FitnessCenter } from '@material-ui/icons';
 import CircleItem from 'components/circle-item';
 import Timer from 'components/timer';
+import { MeasurementType } from 'store/types';
 
 interface OwnProps {
   task: TaskStatus;
@@ -34,7 +35,7 @@ const ExerciseState = ({ task, setIndex, paused }: OwnProps) => {
         <Box border="6px solid" borderColor="secondary.main" borderRadius="50%" p={4}>
           <FitnessCenter style={{ fontSize: 100 }} />
         </Box>
-        {task.exercise.measurementType === "TIMED" && <Box mt={1}><Timer seconds={task.setsGoal[setIndex]} paused={paused} /></Box>}
+        {task.exercise.measurementType === MeasurementType.TIMED && <Box mt={1}><Timer key={setIndex} seconds={task.setsGoal[setIndex]} paused={paused} /></Box>}
       </Box>
       <Box display="flex" flexDirection="column" alignItems="center" mt={3}>
         <Typography variant="h5" gutterBottom>{task.setsGoal[setIndex]} {exerciseTypeToWord(task.exercise.measurementType, task.setsGoal[setIndex])}</Typography>

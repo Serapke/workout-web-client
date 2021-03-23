@@ -2,13 +2,13 @@ import * as React from "react";
 import { connect } from "react-redux";
 import { RouteComponentProps } from "react-router-dom";
 
-import { getActiveWorkoutStatus, continueWorkout, finishWorkout, updateWorkoutDuration } from 'services/workout';
 import { WorkoutStatus } from 'services/types';
 import ExerciseState from './workout-exercise-state';
 import WorkoutRestState from './workout-rest-state';
 import { Box } from '@material-ui/core';
 import WorkoutTime from './components/workout-time';
 import Button from './components/button';
+import { getActiveWorkoutStatus, updateWorkoutDuration, finishWorkout, continueWorkout } from 'services/live-workout';
 
 interface RouteParams {
   id: string;
@@ -43,7 +43,7 @@ const WorkoutLivePage: React.FunctionComponent<AllProps> = ({ match, history }) 
 
   const updateDuration = (duration: number) => {
     if (duration !== 0 && duration % 10 === 0) {
-      updateWorkoutDuration(status.workoutStatusId, duration);
+      updateWorkoutDuration(status.id, duration);
     } else {
       setDuration(duration);
     }
@@ -58,15 +58,15 @@ const WorkoutLivePage: React.FunctionComponent<AllProps> = ({ match, history }) 
     } else if (status.nextTask) {
       updatePageState(WorkoutPageState.REST);
     } else {
-      updateWorkoutDuration(status.workoutStatusId, duration);
-      finishWorkout(status.workoutStatusId, setsDone).then(() => {
-        history.push(`/workout/${match.params.id}/result/${status.workoutStatusId}`);
+      updateWorkoutDuration(status.id, duration);
+      finishWorkout(status.id, setsDone).then(() => {
+        history.push(`/workout/${match.params.id}/result/${status.id}`);
       })
     }
   }
 
   const onExerciseResultStateNextClick = () => {
-    continueWorkout(status.workoutStatusId, setsDone).then((status) => {
+    continueWorkout(status.id, setsDone).then((status) => {
       updatePageState(WorkoutPageState.EXERCISE);
       updateStatus(status);
       updateSetsDone([]);
