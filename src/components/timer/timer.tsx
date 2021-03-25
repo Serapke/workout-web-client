@@ -1,8 +1,7 @@
 import * as React from "react";
 import { Button, Typography } from '@material-ui/core';
 
-import beep from "./../../sounds/notification_simple-01.wav";
-import completed from "./../../sounds/notification_simple-02.wav";
+import completionSound from "./../../sounds/completion-sound.wav";
 import useTimer from 'hooks/useTimer';
 
 interface OwnProps {
@@ -36,11 +35,10 @@ const Timer = ({ title, seconds, paused, increaseBy, onEnd = () => { } }: OwnPro
 
   const { start, pause, resume, stop } = useTimer({
     delay: 1000, startImmediately: true, callback: () => {
-      if (value > 1 && value <= 4) {
-        playSound(new Audio(beep));
-      } else if (value === 1) {
-        playSound(new Audio(completed));
-      } else if (value === 0) {
+      if (value === 4) {
+        playSound(new Audio(completionSound));
+      }
+      else if (value === 0) {
         stop();
         onEnd();
       }

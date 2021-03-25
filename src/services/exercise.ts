@@ -6,6 +6,11 @@ export const getAllExercises: () => Promise<Exercise[]> = async () => {
   return response.json();
 };
 
+export const getExercise: (id: string) => Promise<Exercise> = async (id) => {
+  const response = await fetch(`${process.env.REACT_APP_API_URL}/exercise/${id}`);
+  return response.json();
+}
+
 export const getBodyParts: () => Promise<BodyPart[]> = async () => {
   const response = await fetch(`${process.env.REACT_APP_API_URL}/exercise/body-parts`);
   return response.json();
@@ -21,3 +26,20 @@ export const createExercise: (exercise: Exercise) => Promise<ApiResponse> = asyn
   });
   return response.json();
 };
+
+export const updateExercise: (exercise: Exercise) => Promise<ApiResponse> = async (exercise) => {
+  const response = await fetch(`${process.env.REACT_APP_API_URL}/exercise/update`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(exercise),
+  });
+  return response.json();
+}
+
+export const deleteExercise: (id: string) => Promise<any> = async (id) => {
+  fetch(`${process.env.REACT_APP_API_URL}/exercise/${id}`, {
+    method: 'DELETE'
+  });
+}

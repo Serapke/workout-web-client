@@ -6,8 +6,9 @@ import { Exercise } from "../../store/types";
 
 interface OwnProps {
   exercise: Exercise;
-  selected: boolean;
-  onClick: (id: string) => void;
+  selected?: boolean;
+  selectable?: boolean;
+  onClick?: (id: string) => void;
 }
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -37,7 +38,7 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
-const ExerciseItem = ({ exercise, selected, onClick }: OwnProps) => {
+const ExerciseItem = ({ exercise, selected = false, selectable = true, onClick = () => { } }: OwnProps) => {
   const classes = useStyles();
   return (
     <ListItem button onClick={() => onClick(exercise.id)}>
@@ -56,9 +57,11 @@ const ExerciseItem = ({ exercise, selected, onClick }: OwnProps) => {
           ))}
         </div>
       </div>
-      <span className={`${classes.statusIcon} ${selected ? classes.selected : ""}`}>
-        {selected ? <Check color="secondary" /> : <Add color="secondary" />}
-      </span>
+      {
+        selectable && <span className={`${classes.statusIcon} ${selected ? classes.selected : ""}`}>
+          {selected ? <Check color="secondary" /> : <Add color="secondary" />}
+        </span>
+      }
     </ListItem>
   );
 };
