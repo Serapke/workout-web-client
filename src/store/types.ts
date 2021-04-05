@@ -24,14 +24,22 @@ export interface Exercise {
     startingPosition: string;
     steps: string[];
   };
-  bodyParts: BodyPart[];
+  type: Type;
   defaultQuantity: number;
   measurementType: MeasurementType;
+  bodyParts: BodyPart[];
 }
 
 export enum MeasurementType {
   TIMED = "TIMED",
   QUANTITATIVE = "QUANTITATIVE"
+}
+
+export enum Type {
+  AEROBIC = "AEROBIC",
+  STRENGTH = "STRENGTH",
+  STRETCHING = "STRETCHING",
+  BALANCE = "BALANCE",
 }
 
 export type BodyPart = "SHOULDERS" | "ARMS" | "CHEST" | "ABS" | "BACK" | "BUTT" | "LEGS";

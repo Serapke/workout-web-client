@@ -1,8 +1,8 @@
 import React from 'react';
-import { TextField, Box, FormGroup, Chip, makeStyles, Typography, Button } from '@material-ui/core';
+import { TextField, Box, FormGroup, Chip, makeStyles, Typography, Button, MenuItem } from '@material-ui/core';
 import { Autocomplete } from '@material-ui/lab';
 import Fab from 'components/fab';
-import { BodyPart, Exercise, MeasurementType } from 'store/types';
+import { BodyPart, Exercise, MeasurementType, Type } from 'store/types';
 import { capitalizeWord } from 'utils/text-utils';
 import { fabKeyboardStyles, onInputFocusHideFab, onInputBlurShowFab } from 'utils/ui-utils';
 import { updateObjectInArray } from 'utils/immutable';
@@ -23,6 +23,7 @@ export interface FormState {
     startingPosition: StringFieldState;
     steps: StringFieldState[];
   };
+  type: StringFieldState;
   defaultQuantity: StringFieldState;
   measurementType: StringFieldState;
   bodyParts: FieldState;
@@ -49,6 +50,11 @@ const measurementTypes = [
   { title: "Seconds", value: MeasurementType.TIMED }
 ];
 
+const types = Object.keys(Type).map(type => ({
+  label: capitalizeWord(type),
+  value: type
+}));
+
 export const EMPTY_STRING_FIELD = {
   value: "", errorMessage: ""
 }
@@ -59,6 +65,7 @@ export const EMPTY_FORM: FormState = {
     startingPosition: EMPTY_STRING_FIELD,
     steps: [EMPTY_STRING_FIELD],
   },
+  type: { value: Object.keys(Type)[0], errorMessage: "" },
   defaultQuantity: EMPTY_STRING_FIELD,
   measurementType: { value: measurementTypes[0].value, errorMessage: "" },
   bodyParts: { value: [], errorMessage: "" },
@@ -70,6 +77,7 @@ export const formFromExercise = (exercise: Exercise): FormState => ({
     startingPosition: { value: exercise.description.startingPosition, errorMessage: "" },
     steps: exercise.description ? exercise.description.steps.map(step => ({ value: step, errorMessage: "" })) : [EMPTY_STRING_FIELD]
   },
+  type: { value: exercise.type, errorMessage: "" },
   defaultQuantity: { value: String(exercise.defaultQuantity), errorMessage: "" },
   measurementType: { value: exercise.measurementType, errorMessage: "" },
   bodyParts: { value: exercise.bodyParts, errorMessage: "" },
@@ -82,6 +90,7 @@ const formToExercise = (form: FormState): Exercise => ({
     startingPosition: form.description.startingPosition.value,
     steps: form.description.steps.map(step => step.value),
   },
+  type: Type[form.type.value],
   bodyParts: form.bodyParts.value,
   defaultQuantity: +form.defaultQuantity.value,
   measurementType: MeasurementType[form.measurementType.value],
@@ -114,13 +123,15 @@ const ExerciseForm = ({ form, bodyParts, updateForm, onSubmit }: OwnProps) => {
     changeFormField("measurementType", { value, errorMessage: "" });
   };
 
+  const onTypeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    changeFormField("type", { value: event.target.value, errorMessage: "" })
+  }
+
   const onBodyPartsChange = (_event: any, newValue: string[]) => {
     changeFormField("bodyParts", { value: newValue, errorMessage: "" });
   };
 
   const addStep = () => {
-    console.log(form.description.steps.some(step => !step.value));
-    console.log(form.description.steps)
     if (form.description.steps.length > 5 || form.description.steps.some(step => !step.value)) {
       return;
     }
@@ -166,49 +177,7 @@ const ExerciseForm = ({ form, bodyParts, updateForm, onSubmit }: OwnProps) => {
           }}
         />
       </Box>
-      <Box marginTop={4}>
-        <Typography variant="subtitle2">Description</Typography>
-        <TextField
-          id="starting_position"
-          label="Starting position"
-          value={form.description.startingPosition.value}
-          error={!!form.description.startingPosition.errorMessage}
-          helperText={form.description.startingPosition.errorMessage}
-          onChange={onStartingPositionChange}
-          color="secondary"
-          rowsMax={2}
-          multiline
-          fullWidth
-          InputProps={{
-            onFocus: () => onInputFocusHideFab(fabClass.keyboardStyle),
-            onBlur: () => onInputBlurShowFab(fabClass.keyboardStyle),
-          }}
-        />
-        {form.description.steps.map((step, stepIndex) => {
-          return (
-            <TextField
-              id={`step${stepIndex}`}
-              key={`step${stepIndex}`}
-              label={`Step ${stepIndex + 1}`}
-              value={step.value}
-              error={!!step.errorMessage}
-              helperText={step.errorMessage}
-              onChange={event => onStepChange(stepIndex, event.target.value)}
-              color="secondary"
-              rowsMax={3}
-              margin="dense"
-              multiline
-              fullWidth
-              InputProps={{
-                onFocus: () => onInputFocusHideFab(fabClass.keyboardStyle),
-                onBlur: () => onInputBlurShowFab(fabClass.keyboardStyle),
-              }}
-            />
-          )
-        })}
-        <Button onClick={addStep} color="secondary">Add step</Button>
-      </Box>
-      <Box display="flex" alignItems="baseline" marginTop={4}>
+      <Box display="flex" alignItems="baseline" marginTop={2}>
         <TextField
           id="defaultQuantity"
           label="Quantity"
@@ -257,6 +226,65 @@ const ExerciseForm = ({ form, bodyParts, updateForm, onSubmit }: OwnProps) => {
           onOpen={() => onInputFocusHideFab(fabClass.keyboardStyle)}
           onClose={() => onInputBlurShowFab(fabClass.keyboardStyle)}
         />
+      </Box>
+      <Box mt={2}>
+        <TextField
+          id="types"
+          select
+          label="Select"
+          error={!!form.type.errorMessage}
+          helperText={form.type.errorMessage || "Please select exercise type"}
+          value={form.type.value}
+          onChange={onTypeChange}
+        >
+          {
+            types.map((type) => (
+              <MenuItem key={type.value} value={type.value}>{type.label}</MenuItem>
+            ))
+          }
+        </TextField>
+      </Box>
+      <Box marginTop={4}>
+        <Typography variant="subtitle2">Description</Typography>
+        <TextField
+          id="starting_position"
+          label="Starting position"
+          value={form.description.startingPosition.value}
+          error={!!form.description.startingPosition.errorMessage}
+          helperText={form.description.startingPosition.errorMessage}
+          onChange={onStartingPositionChange}
+          color="secondary"
+          rowsMax={2}
+          multiline
+          fullWidth
+          InputProps={{
+            onFocus: () => onInputFocusHideFab(fabClass.keyboardStyle),
+            onBlur: () => onInputBlurShowFab(fabClass.keyboardStyle),
+          }}
+        />
+        {form.description.steps.map((step, stepIndex) => {
+          return (
+            <TextField
+              id={`step${stepIndex}`}
+              key={`step${stepIndex}`}
+              label={`Step ${stepIndex + 1}`}
+              value={step.value}
+              error={!!step.errorMessage}
+              helperText={step.errorMessage}
+              onChange={event => onStepChange(stepIndex, event.target.value)}
+              color="secondary"
+              rowsMax={3}
+              margin="dense"
+              multiline
+              fullWidth
+              InputProps={{
+                onFocus: () => onInputFocusHideFab(fabClass.keyboardStyle),
+                onBlur: () => onInputBlurShowFab(fabClass.keyboardStyle),
+              }}
+            />
+          )
+        })}
+        <Button onClick={addStep} color="secondary">Add step</Button>
       </Box>
       <Fab type="submit">Save</Fab>
     </form>

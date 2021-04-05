@@ -58,6 +58,10 @@ const ExercisePage: React.FunctionComponent<AllProps> = ({ match, history }) => 
         </Box>
       </Box>
       <Box className={classes.fieldBox}>
+        <Typography variant="subtitle2">Type:</Typography>
+        <Typography variant="body1">{exercise.type}</Typography>
+      </Box>
+      <Box className={classes.fieldBox}>
         <Typography variant="subtitle2">Default quantity:</Typography>
         <Typography variant="body1">{exercise.defaultQuantity}</Typography>
       </Box>
