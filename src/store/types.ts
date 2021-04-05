@@ -20,7 +20,10 @@ export interface Task {
 export interface Exercise {
   id: string;
   title: string;
-  description: string;
+  description: {
+    startingPosition: string;
+    steps: string[];
+  };
   bodyParts: BodyPart[];
   defaultQuantity: number;
   measurementType: MeasurementType;

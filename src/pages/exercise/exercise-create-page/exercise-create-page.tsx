@@ -22,13 +22,7 @@ const ExerciseCreatePage = ({ match, history }: OwnProps) => {
   const onFormSubmit = (exercise: Exercise) => {
     createExercise(exercise).then((res) => {
       if (res.errors) {
-        setForm((prevState) =>
-          Object.entries(prevState).reduce((newState, [field, value]) => {
-            newState[field as keyof FormState] = value;
-            newState[field as keyof FormState].errorMessage = res.errors[field] as string;
-            return newState;
-          }, {} as FormState)
-        );
+        console.error(res.errors);
       } else {
         history.goBack();
       }

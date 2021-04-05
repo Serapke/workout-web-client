@@ -52,7 +52,10 @@ const ExercisePage: React.FunctionComponent<AllProps> = ({ match, history }) => 
       </Box>
       <Box className={classes.fieldBox}>
         <Typography variant="subtitle2">Description:</Typography>
-        <Typography variant="body1">{exercise.description}</Typography>
+        <Typography variant="body1">Starting position: {exercise.description.startingPosition}</Typography>
+        <Box pl={2} pt={1}>
+          {exercise.description.steps.map((step, stepIndex) => <Typography variant="body1">{stepIndex + 1}. {step}</Typography>)}
+        </Box>
       </Box>
       <Box className={classes.fieldBox}>
         <Typography variant="subtitle2">Default quantity:</Typography>

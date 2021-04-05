@@ -3,21 +3,13 @@ import { getExercise, getBodyParts, updateExercise } from 'services/exercise';
 import { RouteComponentProps } from 'react-router-dom';
 import { Exercise, BodyPart } from 'store/types';
 import { Box, Typography } from '@material-ui/core';
-import ExerciseForm, { FormState, EMPTY_FORM } from '../components/exercise-form';
+import ExerciseForm, { FormState, EMPTY_FORM, formFromExercise } from '../components/exercise-form';
 
 interface RouteParams {
   id: string;
 }
 
 type OwnProps = RouteComponentProps<RouteParams>;
-
-const formFromExercise = (exercise: Exercise) => ({
-  title: { value: exercise.title, errorMessage: "" },
-  description: { value: exercise.description, errorMessage: "" },
-  defaultQuantity: { value: exercise.defaultQuantity, errorMessage: "" },
-  measurementType: { value: exercise.measurementType, errorMessage: "" },
-  bodyParts: { value: exercise.bodyParts, errorMessage: "" },
-});
 
 const ExerciseEditPage: React.FunctionComponent<OwnProps> = ({ match, history }) => {
   const [exercise, setExercise] = React.useState<Exercise>();
@@ -39,13 +31,7 @@ const ExerciseEditPage: React.FunctionComponent<OwnProps> = ({ match, history })
     exercise.id = match.params.id;
     updateExercise(exercise).then((res) => {
       if (res.errors) {
-        setForm((prevState) =>
-          Object.entries(prevState).reduce((newState, [field, value]) => {
-            newState[field as keyof FormState] = value;
-            newState[field as keyof FormState].errorMessage = res.errors[field] as string;
-            return newState;
-          }, {} as FormState)
-        );
+        console.error(res.errors);
       } else {
         history.push(`/exercise/${match.params.id}`);
       }

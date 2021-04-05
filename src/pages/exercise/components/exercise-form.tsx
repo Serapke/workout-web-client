@@ -1,21 +1,30 @@
 import React from 'react';
-import { TextField, Box, FormGroup, Chip, makeStyles } from '@material-ui/core';
+import { TextField, Box, FormGroup, Chip, makeStyles, Typography, Button } from '@material-ui/core';
 import { Autocomplete } from '@material-ui/lab';
 import Fab from 'components/fab';
 import { BodyPart, Exercise, MeasurementType } from 'store/types';
 import { capitalizeWord } from 'utils/text-utils';
 import { fabKeyboardStyles, onInputFocusHideFab, onInputBlurShowFab } from 'utils/ui-utils';
+import { updateObjectInArray } from 'utils/immutable';
 
 export interface FieldState {
   value: any;
   errorMessage: string;
 }
 
+export interface StringFieldState {
+  value: string;
+  errorMessage: string;
+}
+
 export interface FormState {
-  title: FieldState;
-  description: FieldState;
-  defaultQuantity: FieldState;
-  measurementType: FieldState;
+  title: StringFieldState;
+  description: {
+    startingPosition: StringFieldState;
+    steps: StringFieldState[];
+  };
+  defaultQuantity: StringFieldState;
+  measurementType: StringFieldState;
   bodyParts: FieldState;
 }
 
@@ -35,26 +44,47 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const types = [
+const measurementTypes = [
   { title: "Repetitions", value: MeasurementType.QUANTITATIVE },
   { title: "Seconds", value: MeasurementType.TIMED }
 ];
 
+export const EMPTY_STRING_FIELD = {
+  value: "", errorMessage: ""
+}
+
 export const EMPTY_FORM: FormState = {
-  title: { value: "", errorMessage: "" },
-  description: { value: "", errorMessage: "" },
-  defaultQuantity: { value: "", errorMessage: "" },
-  measurementType: { value: types[0].value, errorMessage: "" },
+  title: EMPTY_STRING_FIELD,
+  description: {
+    startingPosition: EMPTY_STRING_FIELD,
+    steps: [EMPTY_STRING_FIELD],
+  },
+  defaultQuantity: EMPTY_STRING_FIELD,
+  measurementType: { value: measurementTypes[0].value, errorMessage: "" },
   bodyParts: { value: [], errorMessage: "" },
 };
+
+export const formFromExercise = (exercise: Exercise): FormState => ({
+  title: { value: exercise.title, errorMessage: "" },
+  description: {
+    startingPosition: { value: exercise.description.startingPosition, errorMessage: "" },
+    steps: exercise.description ? exercise.description.steps.map(step => ({ value: step, errorMessage: "" })) : [EMPTY_STRING_FIELD]
+  },
+  defaultQuantity: { value: String(exercise.defaultQuantity), errorMessage: "" },
+  measurementType: { value: exercise.measurementType, errorMessage: "" },
+  bodyParts: { value: exercise.bodyParts, errorMessage: "" },
+});
 
 const formToExercise = (form: FormState): Exercise => ({
   id: null,
   title: form.title.value,
-  description: form.description.value,
+  description: {
+    startingPosition: form.description.startingPosition.value,
+    steps: form.description.steps.map(step => step.value),
+  },
   bodyParts: form.bodyParts.value,
-  defaultQuantity: form.defaultQuantity.value,
-  measurementType: form.measurementType.value,
+  defaultQuantity: +form.defaultQuantity.value,
+  measurementType: MeasurementType[form.measurementType.value],
 });
 
 const ExerciseForm = ({ form, bodyParts, updateForm, onSubmit }: OwnProps) => {
@@ -70,6 +100,16 @@ const ExerciseForm = ({ form, bodyParts, updateForm, onSubmit }: OwnProps) => {
     changeFormField(event.target.id as keyof FormState, { value: event.target.value, errorMessage: "" });
   };
 
+  const onStartingPositionChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const value = { value: event.target.value, errorMessage: "" };
+    updateForm((prevState: FormState) => ({ ...prevState, description: { ...prevState.description, startingPosition: value } }));
+  }
+
+  const onStepChange = (stepIndex: number, value: string) => {
+    const action = { item: { value, errorMessage: "" }, index: stepIndex };
+    updateForm((prevState: FormState) => ({ ...prevState, description: { ...prevState.description, steps: updateObjectInArray(prevState.description.steps, action) } }));
+  }
+
   const onMeasurementTypeChange = (value: string) => () => {
     changeFormField("measurementType", { value, errorMessage: "" });
   };
@@ -77,6 +117,15 @@ const ExerciseForm = ({ form, bodyParts, updateForm, onSubmit }: OwnProps) => {
   const onBodyPartsChange = (_event: any, newValue: string[]) => {
     changeFormField("bodyParts", { value: newValue, errorMessage: "" });
   };
+
+  const addStep = () => {
+    console.log(form.description.steps.some(step => !step.value));
+    console.log(form.description.steps)
+    if (form.description.steps.length > 5 || form.description.steps.some(step => !step.value)) {
+      return;
+    }
+    updateForm((prevState: FormState) => ({ ...prevState, description: { ...prevState.description, steps: [...prevState.description.steps, EMPTY_STRING_FIELD] } }))
+  }
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
@@ -110,7 +159,6 @@ const ExerciseForm = ({ form, bodyParts, updateForm, onSubmit }: OwnProps) => {
           helperText={form.title.errorMessage}
           onChange={onTextFieldChange}
           color="secondary"
-          margin="normal"
           fullWidth
           InputProps={{
             onFocus: () => onInputFocusHideFab(fabClass.keyboardStyle),
@@ -118,17 +166,17 @@ const ExerciseForm = ({ form, bodyParts, updateForm, onSubmit }: OwnProps) => {
           }}
         />
       </Box>
-      <Box marginTop={2}>
+      <Box marginTop={4}>
+        <Typography variant="subtitle2">Description</Typography>
         <TextField
-          id="description"
-          label="Description"
-          value={form.description.value}
-          error={!!form.description.errorMessage}
-          helperText={form.description.errorMessage}
-          onChange={onTextFieldChange}
+          id="starting_position"
+          label="Starting position"
+          value={form.description.startingPosition.value}
+          error={!!form.description.startingPosition.errorMessage}
+          helperText={form.description.startingPosition.errorMessage}
+          onChange={onStartingPositionChange}
           color="secondary"
-          margin="normal"
-          rowsMax={5}
+          rowsMax={2}
           multiline
           fullWidth
           InputProps={{
@@ -136,8 +184,31 @@ const ExerciseForm = ({ form, bodyParts, updateForm, onSubmit }: OwnProps) => {
             onBlur: () => onInputBlurShowFab(fabClass.keyboardStyle),
           }}
         />
+        {form.description.steps.map((step, stepIndex) => {
+          return (
+            <TextField
+              id={`step${stepIndex}`}
+              key={`step${stepIndex}`}
+              label={`Step ${stepIndex + 1}`}
+              value={step.value}
+              error={!!step.errorMessage}
+              helperText={step.errorMessage}
+              onChange={event => onStepChange(stepIndex, event.target.value)}
+              color="secondary"
+              rowsMax={3}
+              margin="dense"
+              multiline
+              fullWidth
+              InputProps={{
+                onFocus: () => onInputFocusHideFab(fabClass.keyboardStyle),
+                onBlur: () => onInputBlurShowFab(fabClass.keyboardStyle),
+              }}
+            />
+          )
+        })}
+        <Button onClick={addStep} color="secondary">Add step</Button>
       </Box>
-      <Box display="flex" alignItems="baseline" marginTop={2}>
+      <Box display="flex" alignItems="baseline" marginTop={4}>
         <TextField
           id="defaultQuantity"
           label="Quantity"
@@ -146,7 +217,6 @@ const ExerciseForm = ({ form, bodyParts, updateForm, onSubmit }: OwnProps) => {
           helperText={form.defaultQuantity.errorMessage}
           onChange={onTextFieldChange}
           color="secondary"
-          margin="normal"
           fullWidth
           InputProps={{
             onFocus: () => onInputFocusHideFab(fabClass.keyboardStyle),
@@ -154,7 +224,7 @@ const ExerciseForm = ({ form, bodyParts, updateForm, onSubmit }: OwnProps) => {
           }}
         />
         <FormGroup className={classes.measurementTypeGroup} row>
-          {types.map((type) => (
+          {measurementTypes.map((type) => (
             <Chip
               key={type.value}
               className={classes.measurementType}
