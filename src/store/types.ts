@@ -28,6 +28,7 @@ export interface Exercise {
   defaultQuantity: number;
   measurementType: MeasurementType;
   bodyParts: BodyPart[];
+  equipment: Equipment[];
 }
 
 export enum MeasurementType {
@@ -43,3 +44,12 @@ export enum Type {
 }
 
 export type BodyPart = "SHOULDERS" | "ARMS" | "CHEST" | "ABS" | "BACK" | "BUTT" | "LEGS";
+
+export enum Equipment {
+  BODY_ONLY = "BODY ONLY",
+  DUMBBELL = "DUMBBELL",
+  PULL_BAR = "PULL BAR"
+}
+
+
+

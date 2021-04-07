@@ -2,7 +2,7 @@ import React from 'react';
 import { TextField, Box, FormGroup, Chip, makeStyles, Typography, Button, MenuItem } from '@material-ui/core';
 import { Autocomplete } from '@material-ui/lab';
 import Fab from 'components/fab';
-import { BodyPart, Exercise, MeasurementType, Type } from 'store/types';
+import { BodyPart, Exercise, MeasurementType, Type, Equipment } from 'store/types';
 import { capitalizeWord } from 'utils/text-utils';
 import { fabKeyboardStyles, onInputFocusHideFab, onInputBlurShowFab } from 'utils/ui-utils';
 import { updateObjectInArray } from 'utils/immutable';
@@ -27,6 +27,7 @@ export interface FormState {
   defaultQuantity: StringFieldState;
   measurementType: StringFieldState;
   bodyParts: FieldState;
+  equipment: FieldState;
 }
 
 interface OwnProps {
@@ -69,6 +70,7 @@ export const EMPTY_FORM: FormState = {
   defaultQuantity: EMPTY_STRING_FIELD,
   measurementType: { value: measurementTypes[0].value, errorMessage: "" },
   bodyParts: { value: [], errorMessage: "" },
+  equipment: { value: [], errorMessage: "" },
 };
 
 export const formFromExercise = (exercise: Exercise): FormState => ({
@@ -81,6 +83,7 @@ export const formFromExercise = (exercise: Exercise): FormState => ({
   defaultQuantity: { value: String(exercise.defaultQuantity), errorMessage: "" },
   measurementType: { value: exercise.measurementType, errorMessage: "" },
   bodyParts: { value: exercise.bodyParts, errorMessage: "" },
+  equipment: { value: exercise.equipment, errorMessage: "" },
 });
 
 const formToExercise = (form: FormState): Exercise => ({
@@ -92,12 +95,14 @@ const formToExercise = (form: FormState): Exercise => ({
   },
   type: Type[form.type.value],
   bodyParts: form.bodyParts.value,
+  equipment: form.equipment.value,
   defaultQuantity: +form.defaultQuantity.value,
   measurementType: MeasurementType[form.measurementType.value],
 });
 
 const ExerciseForm = ({ form, bodyParts, updateForm, onSubmit }: OwnProps) => {
   const bodyPartsInputRef = React.createRef<HTMLInputElement>();
+  const equipmentInputRef = React.createRef<HTMLInputElement>();
   const classes = useStyles();
   const fabClass = fabKeyboardStyles();
 
@@ -127,8 +132,8 @@ const ExerciseForm = ({ form, bodyParts, updateForm, onSubmit }: OwnProps) => {
     changeFormField("type", { value: event.target.value, errorMessage: "" })
   }
 
-  const onBodyPartsChange = (_event: any, newValue: string[]) => {
-    changeFormField("bodyParts", { value: newValue, errorMessage: "" });
+  const onAutoCompleteFieldChange = (field: keyof FormState) => (_event: any, newValue: string[]) => {
+    changeFormField(field, { value: newValue, errorMessage: "" });
   };
 
   const addStep = () => {
@@ -153,6 +158,13 @@ const ExerciseForm = ({ form, bodyParts, updateForm, onSubmit }: OwnProps) => {
     if (!form.bodyParts.value.length) {
       setFieldError("bodyParts", "Must choose at least 1 body part");
       const node = bodyPartsInputRef.current;
+      if (node) {
+        node.focus();
+      }
+    }
+    if (!form.equipment.value.length) {
+      setFieldError("equipment", "Equipment field cannot be empty");
+      const node = equipmentInputRef.current;
       if (node) {
         node.focus();
       }
@@ -222,7 +234,30 @@ const ExerciseForm = ({ form, bodyParts, updateForm, onSubmit }: OwnProps) => {
           )}
           ChipProps={{ color: "secondary" }}
           value={form.bodyParts.value}
-          onChange={onBodyPartsChange}
+          onChange={onAutoCompleteFieldChange("bodyParts")}
+          onOpen={() => onInputFocusHideFab(fabClass.keyboardStyle)}
+          onClose={() => onInputBlurShowFab(fabClass.keyboardStyle)}
+        />
+      </Box>
+      <Box mt={2}>
+        <Autocomplete
+          options={Object.values(Equipment)}
+          getOptionLabel={(option) => capitalizeWord(option)}
+          multiple
+          renderInput={(params: any) => (
+            <TextField
+              color="secondary"
+              {...params}
+              variant="standard"
+              label="Equipment"
+              inputRef={equipmentInputRef}
+              error={!!form.equipment.errorMessage}
+              helperText={form.equipment.errorMessage}
+            />
+          )}
+          ChipProps={{ color: "secondary" }}
+          value={form.equipment.value}
+          onChange={onAutoCompleteFieldChange("equipment")}
           onOpen={() => onInputFocusHideFab(fabClass.keyboardStyle)}
           onClose={() => onInputBlurShowFab(fabClass.keyboardStyle)}
         />

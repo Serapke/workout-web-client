@@ -73,6 +73,10 @@ const ExercisePage: React.FunctionComponent<AllProps> = ({ match, history }) => 
         <Typography variant="subtitle2">Body parts:</Typography>
         <Typography variant="body1">{exercise.bodyParts.map(bodyPart => bodyPart + " ")}</Typography>
       </Box>
+      <Box className={classes.fieldBox}>
+        <Typography variant="subtitle2">Equipment:</Typography>
+        <Typography variant="body1">{exercise.equipment.map(eq => eq + " ")}</Typography>
+      </Box>
     </Box>
   )
 }
