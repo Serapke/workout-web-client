@@ -2,7 +2,7 @@ import React from 'react';
 import { TextField, Box, FormGroup, Chip, makeStyles, Typography, Button, MenuItem } from '@material-ui/core';
 import { Autocomplete } from '@material-ui/lab';
 import Fab from 'components/fab';
-import { BodyPart, Exercise, MeasurementType, Type, Equipment } from 'store/types';
+import { BodyPart, Exercise, MeasurementType, Type, Equipment, Difficulty } from 'store/types';
 import { capitalizeWord } from 'utils/text-utils';
 import { fabKeyboardStyles, onInputFocusHideFab, onInputBlurShowFab } from 'utils/ui-utils';
 import { updateObjectInArray } from 'utils/immutable';
@@ -28,6 +28,7 @@ export interface FormState {
   measurementType: StringFieldState;
   bodyParts: FieldState;
   equipment: FieldState;
+  difficulty: StringFieldState;
 }
 
 interface OwnProps {
@@ -56,6 +57,11 @@ const types = Object.keys(Type).map(type => ({
   value: type
 }));
 
+const difficulties = Object.keys(Difficulty).map(difficulty => ({
+  label: capitalizeWord(difficulty),
+  value: difficulty
+}));
+
 export const EMPTY_STRING_FIELD = {
   value: "", errorMessage: ""
 }
@@ -71,6 +77,7 @@ export const EMPTY_FORM: FormState = {
   measurementType: { value: measurementTypes[0].value, errorMessage: "" },
   bodyParts: { value: [], errorMessage: "" },
   equipment: { value: [], errorMessage: "" },
+  difficulty: { value: difficulties[0].value, errorMessage: "" },
 };
 
 export const formFromExercise = (exercise: Exercise): FormState => ({
@@ -84,6 +91,7 @@ export const formFromExercise = (exercise: Exercise): FormState => ({
   measurementType: { value: exercise.measurementType, errorMessage: "" },
   bodyParts: { value: exercise.bodyParts, errorMessage: "" },
   equipment: { value: exercise.equipment, errorMessage: "" },
+  difficulty: { value: exercise.difficulty, errorMessage: "" },
 });
 
 const formToExercise = (form: FormState): Exercise => ({
@@ -98,6 +106,7 @@ const formToExercise = (form: FormState): Exercise => ({
   equipment: form.equipment.value,
   defaultQuantity: +form.defaultQuantity.value,
   measurementType: MeasurementType[form.measurementType.value],
+  difficulty: Difficulty[form.difficulty.value],
 });
 
 const ExerciseForm = ({ form, bodyParts, updateForm, onSubmit }: OwnProps) => {
@@ -128,8 +137,8 @@ const ExerciseForm = ({ form, bodyParts, updateForm, onSubmit }: OwnProps) => {
     changeFormField("measurementType", { value, errorMessage: "" });
   };
 
-  const onTypeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    changeFormField("type", { value: event.target.value, errorMessage: "" })
+  const onSelectChange = (field: keyof FormState) => (event: React.ChangeEvent<HTMLInputElement>) => {
+    changeFormField(field, { value: event.target.value, errorMessage: "" })
   }
 
   const onAutoCompleteFieldChange = (field: keyof FormState) => (_event: any, newValue: string[]) => {
@@ -262,7 +271,7 @@ const ExerciseForm = ({ form, bodyParts, updateForm, onSubmit }: OwnProps) => {
           onClose={() => onInputBlurShowFab(fabClass.keyboardStyle)}
         />
       </Box>
-      <Box mt={2}>
+      <Box mt={2} display="flex" justifyContent="space-between">
         <TextField
           id="types"
           select
@@ -270,11 +279,26 @@ const ExerciseForm = ({ form, bodyParts, updateForm, onSubmit }: OwnProps) => {
           error={!!form.type.errorMessage}
           helperText={form.type.errorMessage || "Please select exercise type"}
           value={form.type.value}
-          onChange={onTypeChange}
+          onChange={onSelectChange("type")}
         >
           {
             types.map((type) => (
               <MenuItem key={type.value} value={type.value}>{type.label}</MenuItem>
+            ))
+          }
+        </TextField>
+        <TextField
+          id="types"
+          select
+          label="Select"
+          error={!!form.difficulty.errorMessage}
+          helperText={form.difficulty.errorMessage || "Please select exercise difficulty"}
+          value={form.difficulty.value}
+          onChange={onSelectChange("difficulty")}
+        >
+          {
+            difficulties.map((difficulty) => (
+              <MenuItem key={difficulty.value} value={difficulty.value}>{difficulty.label}</MenuItem>
             ))
           }
         </TextField>

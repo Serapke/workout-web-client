@@ -29,6 +29,7 @@ export interface Exercise {
   measurementType: MeasurementType;
   bodyParts: BodyPart[];
   equipment: Equipment[];
+  difficulty: Difficulty;
 }
 
 export enum MeasurementType {
@@ -49,6 +50,12 @@ export enum Equipment {
   BODY_ONLY = "BODY ONLY",
   DUMBBELL = "DUMBBELL",
   PULL_BAR = "PULL BAR"
+}
+
+export enum Difficulty {
+  BEGINNER = "BEGINNER",
+  INTERMEDIATE = "INTERMEDIATE",
+  EXPERT = "EXPERT"
 }
 
 
