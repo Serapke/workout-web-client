@@ -30,6 +30,7 @@ export interface Exercise {
   bodyParts: BodyPart[];
   equipment: Equipment[];
   difficulty: Difficulty;
+  bothSided: boolean;
 }
 
 export enum MeasurementType {

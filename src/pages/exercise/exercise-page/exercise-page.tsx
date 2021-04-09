@@ -81,6 +81,10 @@ const ExercisePage: React.FunctionComponent<AllProps> = ({ match, history }) => 
         <Typography variant="subtitle2">Difficulty:</Typography>
         <Typography variant="body1">{exercise.difficulty}</Typography>
       </Box>
+      <Box className={classes.fieldBox}>
+        <Typography variant="subtitle2">Both sided:</Typography>
+        <Typography variant="body1">{exercise.bothSided ? "TRUE" : "FALSE"}</Typography>
+      </Box>
     </Box>
   )
 }

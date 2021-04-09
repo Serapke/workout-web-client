@@ -1,5 +1,5 @@
 import React from 'react';
-import { TextField, Box, FormGroup, Chip, makeStyles, Typography, Button, MenuItem } from '@material-ui/core';
+import { TextField, Box, FormGroup, Chip, makeStyles, Typography, Button, MenuItem, FormControlLabel, Checkbox } from '@material-ui/core';
 import { Autocomplete } from '@material-ui/lab';
 import Fab from 'components/fab';
 import { BodyPart, Exercise, MeasurementType, Type, Equipment, Difficulty } from 'store/types';
@@ -29,6 +29,7 @@ export interface FormState {
   bodyParts: FieldState;
   equipment: FieldState;
   difficulty: StringFieldState;
+  bothSided: FieldState;
 }
 
 interface OwnProps {
@@ -78,6 +79,7 @@ export const EMPTY_FORM: FormState = {
   bodyParts: { value: [], errorMessage: "" },
   equipment: { value: [], errorMessage: "" },
   difficulty: { value: difficulties[0].value, errorMessage: "" },
+  bothSided: { value: false, errorMessage: "" },
 };
 
 export const formFromExercise = (exercise: Exercise): FormState => ({
@@ -92,6 +94,7 @@ export const formFromExercise = (exercise: Exercise): FormState => ({
   bodyParts: { value: exercise.bodyParts, errorMessage: "" },
   equipment: { value: exercise.equipment, errorMessage: "" },
   difficulty: { value: exercise.difficulty, errorMessage: "" },
+  bothSided: { value: exercise.bothSided, errorMessage: "" },
 });
 
 const formToExercise = (form: FormState): Exercise => ({
@@ -107,6 +110,7 @@ const formToExercise = (form: FormState): Exercise => ({
   defaultQuantity: +form.defaultQuantity.value,
   measurementType: MeasurementType[form.measurementType.value],
   difficulty: Difficulty[form.difficulty.value],
+  bothSided: form.bothSided.value,
 });
 
 const ExerciseForm = ({ form, bodyParts, updateForm, onSubmit }: OwnProps) => {
@@ -139,6 +143,10 @@ const ExerciseForm = ({ form, bodyParts, updateForm, onSubmit }: OwnProps) => {
 
   const onSelectChange = (field: keyof FormState) => (event: React.ChangeEvent<HTMLInputElement>) => {
     changeFormField(field, { value: event.target.value, errorMessage: "" })
+  }
+
+  const onCheckboxChange = (field: keyof FormState) => (event: React.ChangeEvent<HTMLInputElement>) => {
+    changeFormField(field, { value: event.target.checked, errorMessage: "" })
   }
 
   const onAutoCompleteFieldChange = (field: keyof FormState) => (_event: any, newValue: string[]) => {
@@ -302,6 +310,12 @@ const ExerciseForm = ({ form, bodyParts, updateForm, onSubmit }: OwnProps) => {
             ))
           }
         </TextField>
+      </Box>
+      <Box mt={2}>
+        <FormControlLabel
+          control={<Checkbox checked={form.bothSided.value} onChange={onCheckboxChange("bothSided")} id="bothSided" />}
+          label="Both sided (left/right)"
+        />
       </Box>
       <Box marginTop={4}>
         <Typography variant="subtitle2">Description</Typography>
