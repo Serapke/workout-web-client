@@ -45,7 +45,18 @@ export enum Type {
   BALANCE = "BALANCE",
 }
 
-export type BodyPart = "SHOULDERS" | "ARMS" | "CHEST" | "ABS" | "BACK" | "BUTT" | "LEGS";
+export enum BodyPart {
+  ABS = "ABS",
+  BACK = "BACK",
+  BICEPS = "BICEPS",
+  CHEST = "CHEST",
+  FOREARM = "FOREARM",
+  GLUTES = "GLUTES",
+  SHOULDERS = "SHOULDERS",
+  TRICEPS = "TRICEPS",
+  UPPER_LEGS = "UPPER_LEGS",
+  LOWER_LEGS = "LOWER_LEGS",
+}
 
 export enum Equipment {
   BODY_ONLY = "BODY ONLY",
