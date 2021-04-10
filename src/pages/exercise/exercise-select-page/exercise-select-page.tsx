@@ -24,6 +24,7 @@ import { capitalizeWord } from "../../../utils/text-utils";
 import ExerciseItem from "../../../components/exercise";
 import EmptyState from "../../../components/empty-state";
 import { ApplicationState } from "../../../store";
+import ExerciseDialog from 'components/exercise/exercise-dialog';
 
 interface LocationState {
   new: boolean;
@@ -85,6 +86,8 @@ const ExerciseSelectPage = ({
   const [searchQuery, setSearchQuery] = React.useState<string>("");
   const [selectedItems, setSelectedItems] = React.useState<string[]>([]);
   const [selectedBodyParts, setSelectedBodyParts] = React.useState<BodyPart[]>([]);
+  const [open, setOpen] = React.useState(false);
+  const [openedExercise, setOpenedExercise] = React.useState<Exercise>(null);
   const classes = useStyles();
   const fabClass = fabKeyboardStyles();
 
@@ -92,6 +95,16 @@ const ExerciseSelectPage = ({
     fetchBodyParts();
     fetchExercises();
   }, [fetchBodyParts, fetchExercises]);
+
+  const handleClickOpen = (exercise: Exercise) => {
+    setOpenedExercise(exercise);
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+    setOpenedExercise(null);
+  };
 
   const onExerciseClick = (id: string) => {
     if (isSelected(id)) {
@@ -174,7 +187,8 @@ const ExerciseSelectPage = ({
               key={exercise.id + "_" + index}
               exercise={exercise}
               selected={isSelected(exercise.id)}
-              onClick={onExerciseClick}
+              onSelect={onExerciseClick}
+              onIconClick={handleClickOpen}
             />
           ))
         ) : (
@@ -184,6 +198,7 @@ const ExerciseSelectPage = ({
       <Button id="fab" className={classes.fab} color="secondary" variant="contained" onClick={onSelect}>
         Select
       </Button>
+      <ExerciseDialog open={open} handleClose={handleClose} exercise={openedExercise} />
     </div>
   );
 };

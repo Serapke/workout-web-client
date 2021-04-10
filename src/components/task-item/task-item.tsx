@@ -2,16 +2,15 @@ import * as React from "react";
 import {
   Typography,
   Box,
-  Avatar,
   makeStyles,
   Theme,
   createStyles,
   ListItem,
 } from "@material-ui/core";
-import { Add, FitnessCenter } from "@material-ui/icons";
+import { FitnessCenter, Info } from "@material-ui/icons";
 import { Draggable } from "react-beautiful-dnd";
 import TaskItemMenu from "./task-item-menu";
-import { Task } from "../../store/types";
+import { Task, Exercise } from "../../store/types";
 import CircleItem from "../circle-item";
 import { exerciseMeasurementTypeToLetter } from 'utils/common';
 
@@ -22,24 +21,33 @@ interface OwnProps {
   onSetClick: (taskIndex: number, setIndex: number) => void;
   onAddSetClick: (index: number) => void;
   onDeleteClick: (index: number) => void;
+  onIconClick: (exercise: Exercise) => void;
 }
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
-    avatar: {
-      marginRight: theme.spacing(2),
+    card: {
+      width: "100%",
+      display: "flex",
+      border: "1px solid #909090",
+      borderRadius: theme.spacing(1),
+      overflow: "hidden",
+      position: "relative",
     },
-    listItem: {
+    cardIcon: {
+      width: "75px",
       display: "flex",
       alignItems: "center",
-      justifyContent: "space-between",
+      justifyContent: "center",
+      backgroundColor: theme.palette.primary.main,
+      paddingLeft: theme.spacing(1),
+      paddingRight: theme.spacing(1),
+      position: "relative",
+    },
+    icon: {
+      color: theme.palette.primary.contrastText,
     },
     setBox: {
-      "&>*": {
-        margin: "4px",
-      },
-    },
-    bodyTagBox: {
       "&>*": {
         margin: "4px",
       },
@@ -47,14 +55,15 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
-const TaskItem: React.FC<OwnProps> = ({
+const TaskItem = ({
   index,
   task,
   editable,
   onSetClick,
   onAddSetClick,
   onDeleteClick,
-}) => {
+  onIconClick
+}: OwnProps) => {
   const classes = useStyles();
 
   const onSet = (event: React.MouseEvent<HTMLDivElement>, setIndex: number) => {
@@ -77,32 +86,37 @@ const TaskItem: React.FC<OwnProps> = ({
       {(provided) => (
         <ListItem
           ref={provided.innerRef}
-          className={classes.listItem}
           {...provided.draggableProps}
           {...provided.dragHandleProps}
+          disableGutters
         >
-          <Box display="flex" alignItems="center">
-            <Avatar className={classes.avatar}>
-              <FitnessCenter />
-            </Avatar>
-            <div>
-              <Typography variant="subtitle2">{task.exercise.title}</Typography>
-              <Box display="flex" flexWrap="wrap" className={classes.setBox}>
-                {task.sets.map((set, sIndex) => (
-                  <CircleItem key={sIndex} color="secondary" outlined onClick={(e) => onSet(e, sIndex)}>
+          <Box className={classes.card}>
+            <Box className={classes.cardIcon} onClick={() => onIconClick(task.exercise)}>
+              <Box position="absolute" right="6px" top="8px">
+                <Info className={classes.icon} style={{ fontSize: 14 }} />
+              </Box>
+              <FitnessCenter className={classes.icon} style={{ fontSize: 50 }} />
+            </Box>
+            <Box display="flex" flexDirection="column" px={2} py={1}>
+              <Typography variant="h6">{task.exercise.title}</Typography>
+              <Box display="flex" mt={0.5} className={classes.setBox}>
+                {task.sets.map((set, sIndex) =>
+                  <CircleItem key={`set-goal-${sIndex}`} size="small" color="secondary" onClick={(e) => onSet(e, sIndex)}>
                     {set}
                     {exerciseMeasurementTypeToLetter(task.exercise.measurementType)}
                   </CircleItem>
-                ))}
+                )}
                 {editable && (
-                  <CircleItem color="secondary" onClick={onAdd}>
-                    <Add />
+                  <CircleItem key={`set-goal-plus`} size="small" color="secondary" onClick={onAdd} fontSize="20px">
+                    +
                   </CircleItem>
                 )}
               </Box>
-            </div>
+            </Box>
+            {editable &&
+              <Box position="absolute" right="5px"><TaskItemMenu onDelete={onDelete} /></Box>
+            }
           </Box>
-          {editable && <TaskItemMenu onDelete={onDelete} />}
         </ListItem>
       )}
     </Draggable>

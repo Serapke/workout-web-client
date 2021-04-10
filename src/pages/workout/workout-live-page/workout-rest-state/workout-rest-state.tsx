@@ -4,6 +4,9 @@ import Timer from 'components/timer';
 import { TaskStatus } from 'services/types';
 import CircleItem from 'components/circle-item';
 import { exerciseMeasurementTypeToLetter } from 'utils/common';
+import ExerciseDialog from 'components/exercise/exercise-dialog';
+import { Exercise } from 'store/types';
+import { FitnessCenter, Info } from '@material-ui/icons';
 
 
 interface OwnProps {
@@ -14,6 +17,27 @@ interface OwnProps {
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
+    card: {
+      width: "100%",
+      display: "flex",
+      border: "1px solid #909090",
+      borderRadius: theme.spacing(1),
+      marginTop: theme.spacing(2),
+      overflow: "hidden",
+    },
+    cardIcon: {
+      width: "100px",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      backgroundColor: theme.palette.primary.main,
+      paddingLeft: theme.spacing(2),
+      paddingRight: theme.spacing(2),
+      position: "relative",
+    },
+    icon: {
+      color: theme.palette.primary.contrastText,
+    },
     nextUp: {
       color: "#777",
     },
@@ -28,20 +52,42 @@ const useStyles = makeStyles((theme: Theme) =>
 const WorkoutRestState = ({ paused, nextTask, rest }: OwnProps) => {
   const classes = useStyles();
 
+  const [open, setOpen] = React.useState(false);
+  const [openedExercise, setOpenedExercise] = React.useState<Exercise>(null);
+
+  const handleClickOpen = (exercise: Exercise) => () => {
+    setOpenedExercise(exercise);
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+    setOpenedExercise(null);
+  };
+
   return (
     <Box display="flex" flexDirection="column" alignItems="center" mt={3}>
       <Box display="flex" flexDirection="column" alignItems="center" justifyContent="space-evenly" width={200} height={200} borderRadius="50%" border="6px solid" borderColor="secondary.main">
         <Timer title="Rest" seconds={rest} paused={paused} increaseBy={5} />
       </Box>
-      <Box display="flex" flexDirection="column" alignItems="center" marginTop={3}>
+      <Box display="flex" flexDirection="column" alignItems="center" marginTop={3} width="100%">
         <Typography variant="subtitle1" className={classes.nextUp}>Next up</Typography>
-        <Box display="flex" flexDirection="column" alignItems="center" mt={2}>
-          <Typography variant="h4">{nextTask.exercise.title}</Typography>
-          <Box display="flex" mt={1} className={classes.setBox}>
-            {nextTask.setsGoal.map((setGoal, sIndex) => <CircleItem key={`set-goal-${sIndex}`} size="medium" color="secondary">{setGoal}{exerciseMeasurementTypeToLetter(nextTask.exercise.measurementType)}</CircleItem>)}
+        <Box onClick={handleClickOpen(nextTask.exercise)} className={classes.card}>
+          <Box className={classes.cardIcon}>
+            <Box position="absolute" right="6px" top="8px">
+              <Info className={classes.icon} />
+            </Box>
+            <FitnessCenter className={classes.icon} style={{ fontSize: 50 }} />
+          </Box>
+          <Box display="flex" flexDirection="column" p={2}>
+            <Typography variant="h4">{nextTask.exercise.title}</Typography>
+            <Box display="flex" mt={1} className={classes.setBox}>
+              {nextTask.setsGoal.map((setGoal, sIndex) => <CircleItem key={`set-goal-${sIndex}`} size="medium" color="secondary">{setGoal}{exerciseMeasurementTypeToLetter(nextTask.exercise.measurementType)}</CircleItem>)}
+            </Box>
           </Box>
         </Box>
       </Box>
+      <ExerciseDialog open={open} handleClose={handleClose} exercise={openedExercise} />
     </Box>
   )
 }

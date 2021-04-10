@@ -1,6 +1,6 @@
 import * as React from "react";
 import { DragDropContext, Droppable, DropResult } from "react-beautiful-dnd";
-import { Task } from "../../store/types";
+import { Task, Exercise } from "../../store/types";
 import { showModalRequest } from "../../store/modal/thunks";
 import { updateTasksRequest } from "../../store/form/thunks";
 import EmptyState from "../empty-state";
@@ -9,6 +9,7 @@ import { ActionType } from "../../store/modal/types";
 import { reorder, removeItem } from "../../utils/immutable";
 import TaskItem from "../task-item";
 import { List } from '@material-ui/core';
+import ExerciseDialog from 'components/exercise/exercise-dialog';
 
 interface OwnProps {
   tasks: Task[];
@@ -18,6 +19,9 @@ interface OwnProps {
 }
 
 const TaskList = ({ tasks, editable, showModal, updateTasks }: OwnProps) => {
+  const [open, setOpen] = React.useState(false);
+  const [openedExercise, setOpenedExercise] = React.useState<Exercise>(null);
+
   if (!tasks || !tasks.length) {
     return (
       <div>
@@ -25,6 +29,17 @@ const TaskList = ({ tasks, editable, showModal, updateTasks }: OwnProps) => {
       </div>
     );
   }
+
+  const handleClickOpen = (exercise: Exercise) => {
+    console.log("icon click: ", exercise)
+    setOpenedExercise(exercise);
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+    setOpenedExercise(null);
+  };
 
   const onSetClick = (taskIndex: number, setIndex: number) => {
     if (!editable) return;
@@ -69,26 +84,30 @@ const TaskList = ({ tasks, editable, showModal, updateTasks }: OwnProps) => {
   };
 
   return (
-    <DragDropContext onDragEnd={onDragEnd}>
-      <Droppable droppableId="list" isDropDisabled={!editable}>
-        {(provided) => (
-          <List ref={provided.innerRef} {...provided.droppableProps}>
-            {tasks.map((task, index) => (
-              <TaskItem
-                index={index}
-                task={task}
-                key={task.id + "_" + index}
-                editable={editable}
-                onSetClick={onSetClick}
-                onAddSetClick={onAddSetClick}
-                onDeleteClick={onDeleteClick}
-              />
-            ))}
-            {provided.placeholder}
-          </List>
-        )}
-      </Droppable>
-    </DragDropContext>
+    <React.Fragment>
+      <DragDropContext onDragEnd={onDragEnd}>
+        <Droppable droppableId="list" isDropDisabled={!editable}>
+          {(provided) => (
+            <List ref={provided.innerRef} {...provided.droppableProps}>
+              {tasks.map((task, index) => (
+                <TaskItem
+                  index={index}
+                  task={task}
+                  key={task.id + "_" + index}
+                  editable={editable}
+                  onSetClick={onSetClick}
+                  onAddSetClick={onAddSetClick}
+                  onDeleteClick={onDeleteClick}
+                  onIconClick={handleClickOpen}
+                />
+              ))}
+              {provided.placeholder}
+            </List>
+          )}
+        </Droppable>
+      </DragDropContext>
+      <ExerciseDialog open={open} handleClose={handleClose} exercise={openedExercise} />
+    </React.Fragment>
   );
 };
 

@@ -1,16 +1,18 @@
 import * as React from "react";
 import { makeStyles, createStyles, Typography, Box } from '@material-ui/core';
 import { TaskStatus } from 'services/types';
-import { exerciseTypeToWord, exerciseMeasurementTypeToLetter } from 'utils/common';
-import { FitnessCenter } from '@material-ui/icons';
+import { exerciseTypeToWord as exerciseMeasurementTypeToWord, exerciseMeasurementTypeToLetter } from 'utils/common';
+import { FitnessCenter, Info } from '@material-ui/icons';
 import CircleItem from 'components/circle-item';
 import Timer from 'components/timer';
-import { MeasurementType } from 'store/types';
+import { MeasurementType, Exercise } from 'store/types';
+import ExerciseDialog from 'components/exercise/exercise-dialog';
 
 interface OwnProps {
   task: TaskStatus;
   setIndex: number;
   paused: boolean;
+  togglePause: () => void;
 }
 
 const useStyles = makeStyles(() =>
@@ -26,20 +28,38 @@ const useStyles = makeStyles(() =>
   })
 );
 
-const ExerciseState = ({ task, setIndex, paused }: OwnProps) => {
+const ExerciseState = ({ task, setIndex, paused, togglePause }: OwnProps) => {
   const classes = useStyles();
+
+  const [open, setOpen] = React.useState(false);
+  const [openedExercise, setOpenedExercise] = React.useState<Exercise>(null);
+
+  const handleClickOpen = (exercise: Exercise) => () => {
+    togglePause();
+    setOpenedExercise(exercise);
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+    setOpenedExercise(null);
+    togglePause();
+  };
 
   return (
     <Box display="flex" flexDirection="column" alignItems="center" mt={3}>
       <Box display="flex" flexDirection="column" alignItems="center">
-        <Box border="6px solid" borderColor="secondary.main" borderRadius="50%" p={4}>
+        <Box onClick={handleClickOpen(task.exercise)} border="6px solid" borderColor="secondary.main" borderRadius="8px" p={4} position="relative">
+          <Box position="absolute" right="6px" top="6px">
+            <Info fontSize="large" />
+          </Box>
           <FitnessCenter style={{ fontSize: 100 }} />
         </Box>
         {task.exercise.measurementType === MeasurementType.TIMED && <Box mt={1}><Timer key={setIndex} seconds={task.setsGoal[setIndex]} paused={paused} /></Box>}
       </Box>
       <Box display="flex" flexDirection="column" alignItems="center" mt={3}>
-        <Typography variant="h5" gutterBottom>{task.setsGoal[setIndex]} {exerciseTypeToWord(task.exercise.measurementType, task.setsGoal[setIndex])}</Typography>
-        <Typography variant="h4" className={classes.exercise}>{task.exercise.title}</Typography>
+        <Typography variant="h5" gutterBottom>{task.setsGoal[setIndex]} {exerciseMeasurementTypeToWord(task.exercise.measurementType, task.setsGoal[setIndex])}</Typography>
+        <Typography onClick={handleClickOpen(task.exercise)} variant="h4" className={classes.exercise}>{task.exercise.title}</Typography>
         <Box display="flex" mt={1} className={classes.setBox}>
           {task.setsGoal.map((setGoal, sIndex) =>
             <CircleItem
@@ -52,6 +72,7 @@ const ExerciseState = ({ task, setIndex, paused }: OwnProps) => {
           )}
         </Box>
       </Box>
+      <ExerciseDialog open={open} handleClose={handleClose} exercise={openedExercise} />
     </Box >
   )
 }

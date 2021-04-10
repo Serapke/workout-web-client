@@ -10,6 +10,7 @@ interface Props {
   outlined?: boolean;
   children: React.ReactNode;
   size?: Size;
+  fontSize?: string;
 }
 
 type Size = 'small' | 'medium' | 'large';
@@ -46,7 +47,7 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
-const CircleItem = ({ onClick, color, outlined, children, size = 'small' }: Props) => {
+const CircleItem = ({ onClick, color, outlined, children, size = 'small', fontSize }: Props) => {
   const classes = useStyles();
   return (
     <Box
@@ -55,7 +56,7 @@ const CircleItem = ({ onClick, color, outlined, children, size = 'small' }: Prop
       width={sizeMap[size]}
       height={sizeMap[size]}
       lineHeight={outlined ? lineHeightMap[size] : sizeMap[size]}
-      fontSize={fontSizeMap[size]}
+      fontSize={fontSize || fontSizeMap[size]}
       className={`${classes[color]}${outlined ? ` ${classes.outlined}` : ""}`}
       onClick={onClick}
     >

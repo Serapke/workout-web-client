@@ -1,11 +1,10 @@
 import { createMuiTheme, responsiveFontSizes } from "@material-ui/core";
-import green from "@material-ui/core/colors/green";
-import { amber } from "@material-ui/core/colors";
+import { amber, grey } from "@material-ui/core/colors";
 
 let theme = createMuiTheme({
   palette: {
     primary: {
-      main: green[500],
+      main: grey[900],
     },
     secondary: {
       main: amber[500],

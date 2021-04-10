@@ -18,7 +18,7 @@ const NavigationBar = () => {
   const [drawerOpen, setDrawerOpen] = React.useState(false);
 
   return (
-    <AppBar position="static" color="secondary">
+    <AppBar position="static" color="primary">
       <Toolbar>
         <IconButton
           edge="start"
