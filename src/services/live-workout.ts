@@ -28,6 +28,12 @@ export const finishWorkout: (id: number, sets: number[]) => Promise<any> = async
   });
 }
 
+export const discardWorkout: (id: number) => Promise<any> = async (id) => {
+  return fetch(`${process.env.REACT_APP_API_URL}/live-workout/discard?id=${id}`, {
+    method: "POST",
+  });
+}
+
 export const updateWorkoutDuration: (id: number, durationInSeconds: number) => Promise<any> = async (id, durationInSeconds) => {
   return fetch(`${process.env.REACT_APP_API_URL}/live-workout/update-duration?id=${id}&duration=${durationInSeconds}`, {
     method: "POST"
