@@ -50,7 +50,7 @@ const WorkoutLivePage: React.FunctionComponent<AllProps> = ({ match, history }) 
     };
   }, [history]);
 
-  if (!status) return <div></div>;
+  if (!status) return <div/>;
 
   const togglePause = () => {
     setPaused(prevState => !prevState);
@@ -117,11 +117,13 @@ const WorkoutLivePage: React.FunctionComponent<AllProps> = ({ match, history }) 
     stateComponent = <WorkoutRestState rest={status.rest} nextTask={status.nextTask} paused={paused} />
   }
 
+  const hasMoreSets = status.nextTask || setIndex !== status.currentTask.setsGoal.length - 1;
+
   return (
     <Box>
       <WorkoutTime duration={status.duration} paused={paused} onPauseClick={togglePause} updateDuration={updateDuration} />
       {stateComponent}
-      <Button disabled={paused} onClick={onNextClick}>{status.nextTask ? `Next` : `Finish`}</Button>
+      <Button disabled={paused} onClick={onNextClick}>{hasMoreSets ? `Next` : `Finish`}</Button>
       <ExitLiveWorkoutDialog open={paused} onContinue={onContinueClick} onExit={onExitClick} />
     </Box>
   );
