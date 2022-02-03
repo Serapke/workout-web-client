@@ -75,7 +75,7 @@ const WorkoutLivePage: React.FunctionComponent<AllProps> = ({ match, history }) 
     } else {
       updateWorkoutDuration(status.id, duration);
       finishWorkout(status.id, setsDone).then(() => {
-        history.push(`/workout/${match.params.id}/result/${status.id}`);
+        history.replace(`/workout/${match.params.id}/result/${status.id}`);
       })
     }
   }
