@@ -1,6 +1,5 @@
 import * as React from "react";
 import { connect } from "react-redux";
-import { StaticContext } from "react-router";
 import {
   Input,
   makeStyles,
@@ -14,7 +13,7 @@ import {
   List,
 } from "@material-ui/core";
 import { Clear } from "@material-ui/icons";
-import { Link, RouteComponentProps } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { BodyPart, Exercise } from "../../../store/types";
 import { fetchBodyPartsRequest, fetchExercisesRequest } from "../../../store/content/thunks";
 import { addExercisesToWorkoutRequest } from "../../../store/form/thunks";
@@ -25,11 +24,6 @@ import ExerciseItem from "../../../components/exercise";
 import EmptyState from "../../../components/empty-state";
 import { ApplicationState } from "../../../store";
 import ExerciseDialog from 'components/exercise/exercise-dialog';
-
-interface LocationState {
-  new: boolean;
-  from?: Location;
-}
 
 interface PropsFromState {
   bodyParts: BodyPart[];
@@ -42,7 +36,7 @@ interface PropsFromDispatch {
   saveWorkoutTasks: typeof addExercisesToWorkoutRequest;
 }
 
-type OwnProps = PropsFromState & PropsFromDispatch & RouteComponentProps<{}, StaticContext, LocationState>;
+type AllProps = PropsFromState & PropsFromDispatch;
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -75,14 +69,12 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 const ExerciseSelectPage = ({
-  bodyParts,
-  exercises,
-  location,
-  history,
-  fetchBodyParts,
-  fetchExercises,
-  saveWorkoutTasks,
-}: OwnProps) => {
+                              bodyParts,
+                              exercises,
+                              fetchBodyParts,
+                              fetchExercises,
+                              saveWorkoutTasks,
+                            }: AllProps) => {
   const [searchQuery, setSearchQuery] = React.useState<string>("");
   const [selectedItems, setSelectedItems] = React.useState<string[]>([]);
   const [selectedBodyParts, setSelectedBodyParts] = React.useState<BodyPart[]>([]);
@@ -90,6 +82,11 @@ const ExerciseSelectPage = ({
   const [openedExercise, setOpenedExercise] = React.useState<Exercise>(null);
   const classes = useStyles();
   const fabClass = fabKeyboardStyles();
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const state = location.state as { from: Location };
+  const from = state ? state.from.pathname : '/';
 
   React.useEffect(() => {
     fetchBodyParts();
@@ -138,7 +135,7 @@ const ExerciseSelectPage = ({
 
   const onSelect = () => {
     saveWorkoutTasks(selectedItems);
-    history.push(location.state.from.pathname, { new: false });
+    navigate(from, { state: { new: false } });
   };
 
   return (
@@ -160,7 +157,7 @@ const ExerciseSelectPage = ({
           onChange={(e) => setSearchQuery(e.target.value)}
           endAdornment={
             <IconButton onClick={() => setSearchQuery("")}>
-              <Clear style={{ color: "black" }} />
+              <Clear style={{ color: "black" }}/>
             </IconButton>
           }
           onFocus={() => onInputFocusHideFab(fabClass.keyboardStyle)}
@@ -192,13 +189,13 @@ const ExerciseSelectPage = ({
             />
           ))
         ) : (
-            <EmptyState primaryText="No exercises matched your search." />
-          )}
+          <EmptyState primaryText="No exercises matched your search."/>
+        )}
       </List>
       <Button id="fab" className={classes.fab} color="secondary" variant="contained" onClick={onSelect}>
         Select
       </Button>
-      <ExerciseDialog open={open} handleClose={handleClose} exercise={openedExercise} />
+      <ExerciseDialog open={open} handleClose={handleClose} exercise={openedExercise}/>
     </div>
   );
 };

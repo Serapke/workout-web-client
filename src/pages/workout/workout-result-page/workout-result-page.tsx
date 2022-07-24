@@ -1,18 +1,12 @@
 import * as React from "react";
-import { connect } from "react-redux";
-import { RouteComponentProps } from "react-router-dom"
-import { Typography, Box } from '@material-ui/core';
-import { WorkoutHistory, Emotion } from 'services/types';
+import { Box, Typography } from '@material-ui/core';
+import { Emotion, WorkoutHistory } from 'services/types';
 import { getWorkoutHistory, updateWorkoutEmotion } from 'services/workout-history';
 import EmotionSelector from './components/emotion-selector';
 import TaskHistoryList from './components/task-history-list';
+import { useParams } from "react-router";
 
-interface RouteParams {
-  id: string;
-  result_id: string;
-}
-
-type AllProps = RouteComponentProps<RouteParams>;
+type AllProps = {};
 
 const durationToString = (duration: number) => {
   if (!duration) return "";
@@ -28,35 +22,34 @@ const WorkoutResultStatistics = ({ duration }: { duration: number }) => {
   )
 }
 
-const WorkoutResultPage: React.FunctionComponent<AllProps> = ({ match, history }) => {
+const WorkoutResultPage: React.FunctionComponent<AllProps> = () => {
   const [result, updateResult] = React.useState<WorkoutHistory>();
+  const { resultId } = useParams();
 
   React.useEffect(() => {
-    getWorkoutHistory(match.params.result_id)
+    getWorkoutHistory(resultId)
       .then((history) => updateResult(history))
       .catch(ex => console.log(ex));
-  }, [match.params.result_id]);
+  }, [resultId]);
 
-  if (!result) return <div></div>;
+  if (!result) return <div/>;
 
   const onEmotionClick = (emotion: Emotion) => {
-    if (result.emotion) return;
+    if (result.emotion) {
+      return;
+    }
 
-    updateWorkoutEmotion(+match.params.result_id, emotion);
+    updateWorkoutEmotion(+resultId, emotion);
   }
 
   return (
     <Box display="flex" flexDirection="column" alignItems="center">
       <Typography variant="h4">Results</Typography>
-      <WorkoutResultStatistics duration={result.duration} />
-      <EmotionSelector emotion={result.emotion} onEmotionClick={onEmotionClick} />
-      <TaskHistoryList tasks={result.tasks} />
+      <WorkoutResultStatistics duration={result.duration}/>
+      <EmotionSelector emotion={result.emotion} onEmotionClick={onEmotionClick}/>
+      <TaskHistoryList tasks={result.tasks}/>
     </Box>
   )
 }
 
-const mapStateToProps = () => ({});
-
-const mapDispatchToProps = {};
-
-export default connect(mapStateToProps, mapDispatchToProps)(WorkoutResultPage);
+export default WorkoutResultPage;

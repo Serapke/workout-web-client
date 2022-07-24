@@ -1,22 +1,17 @@
 import * as React from "react";
 import { connect } from "react-redux";
-import { StaticContext } from "react-router";
-import { TextField, makeStyles, createStyles, Theme, Button, InputAdornment, Snackbar } from "@material-ui/core";
-import { Link, RouteComponentProps } from "react-router-dom";
+import { Button, createStyles, InputAdornment, makeStyles, Snackbar, TextField, Theme } from "@material-ui/core";
 import { Alert } from "@material-ui/lab";
-import { Add } from "@material-ui/icons";
 import { WorkoutForm } from "../../../store/form/types";
 import { showModalRequest } from "../../../store/modal/thunks";
-import { updateTasksRequest, updateWorkoutFormRequest, clearWorkoutFormRequest } from "../../../store/form/thunks";
-import { fabKeyboardStyles, onInputFocusHideFab, onInputBlurShowFab } from "../../../utils/ui-utils";
+import { clearWorkoutFormRequest, updateTasksRequest, updateWorkoutFormRequest } from "../../../store/form/thunks";
+import { fabKeyboardStyles, onInputBlurShowFab, onInputFocusHideFab } from "../../../utils/ui-utils";
 import { formToWorkout } from "../../../store/form/utils";
 import { createWorkout } from "../../../services/workout";
 import TaskList from "../../../components/task-list";
 import { ApplicationState } from "../../../store";
-
-interface LocationState {
-  new: boolean;
-}
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Add } from "@material-ui/icons";
 
 interface PropsFromState {
   form: WorkoutForm;
@@ -29,7 +24,7 @@ interface PropsFromDispatch {
   clearForm: typeof clearWorkoutFormRequest;
 }
 
-type OwnProps = PropsFromState & PropsFromDispatch & RouteComponentProps<{}, StaticContext, LocationState>;
+type OwnProps = PropsFromState & PropsFromDispatch;
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -63,22 +58,24 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 const validate = (form: WorkoutForm) => {
-  if (!form.tasks.value.length) {
-    return false;
-  }
-  return true;
+  return form.tasks.value.length;
 };
 
-const WorkoutCreatePage = ({ form, location, history, showModal, updateTasks, updateForm, clearForm }: OwnProps) => {
-  const classes = useStyles();
+const WorkoutCreatePage = ({ form, showModal, updateTasks, updateForm, clearForm }: OwnProps) => {
   const fabClass = fabKeyboardStyles();
   const [error, setError] = React.useState<string>();
 
+  const classes = useStyles();
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  const state = location.state as { new: boolean };
+
   React.useEffect(() => {
-    if (location.state && location.state.new) {
+    if (state && state.new) {
       clearForm();
     }
-  }, [clearForm, location.state]);
+  }, [clearForm, state]);
 
   const onTextFieldChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const name = event.target.id as keyof WorkoutForm;
@@ -101,7 +98,7 @@ const WorkoutCreatePage = ({ form, location, history, showModal, updateTasks, up
         });
       } else {
         clearForm();
-        history.push("/favorites");
+        navigate("/favorites");
       }
     });
   };
@@ -150,12 +147,13 @@ const WorkoutCreatePage = ({ form, location, history, showModal, updateTasks, up
           color="secondary"
           variant="contained"
           component={Link}
-          to={{ pathname: "/exercise/select", state: { from: location } }}
+          to="/exercise/select"
+          state={{ from: location }}
         >
-          <Add fontSize="large" />
+          <Add fontSize="large"/>
         </Button>
         <div className={classes.tasks}>
-          <TaskList tasks={form.tasks.value} editable showModal={showModal} updateTasks={updateTasks} />
+          <TaskList tasks={form.tasks.value} editable showModal={showModal} updateTasks={updateTasks}/>
         </div>
         <Button id="fab" className={classes.cta} color="secondary" variant="contained" type="submit">
           Create

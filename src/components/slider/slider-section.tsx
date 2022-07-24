@@ -1,21 +1,21 @@
 import * as React from "react";
 import Slider from "react-slick";
-import { Link } from "react-router-dom";
 import RoutineSliderItem from "./slider-items/routine";
 import WorkoutSliderItem from "./slider-items/workout";
 
-import { Button, makeStyles, Theme, createStyles, Box } from "@material-ui/core";
+import { Box, Button, createStyles, makeStyles, Theme } from "@material-ui/core";
+import { Link } from "react-router-dom";
 
 export enum ItemType {
   ROUTINE = "routine",
   WORKOUT = "workout",
 }
 
-interface SliderProps {
+interface OwnProps {
   title: string;
   addHref: string;
   addTitle: string;
-  items: Array<any>;
+  items: any[];
   type: ItemType;
 }
 
@@ -65,7 +65,7 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
-const SliderSection: React.FunctionComponent<SliderProps> = ({ title, addHref, addTitle, items, type }) => {
+const SliderSection: React.FunctionComponent<OwnProps> = ({ title, addHref, addTitle, items, type }) => {
   const classes = useStyles();
   const SliderItem = itemTypeToSliderItem[type];
 
@@ -86,7 +86,7 @@ const SliderSection: React.FunctionComponent<SliderProps> = ({ title, addHref, a
     <div className={classes.container}>
       <Box display="flex" justifyContent="space-between">
         <h2>{title}</h2>
-        <Button color="secondary" component={Link} to={{ pathname: addHref, state: { new: true } }}>
+        <Button color="secondary" component={Link} to={addHref} state={{ new: true }}>
           {addTitle}
         </Button>
       </Box>

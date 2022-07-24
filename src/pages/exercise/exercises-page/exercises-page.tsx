@@ -1,12 +1,10 @@
 import * as React from "react";
-import { RouteComponentProps, Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Box, Typography, Button, makeStyles, Theme, createStyles } from '@material-ui/core';
-import { getAllExercises } from 'services/exercise';
+import { getExercises } from 'services/exercise';
 import { Exercise } from 'store/types';
 import ExerciseList from './components/exercise-list';
 import { AddCircleOutline } from '@material-ui/icons';
-
-type AllProps = RouteComponentProps & {}
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -16,16 +14,19 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
-const ExercisesPage: React.FunctionComponent<AllProps> = ({ history }) => {
+const ExercisesPage: React.FunctionComponent = () => {
   const classes = useStyles();
   const [exercises, setExercises] = React.useState<Exercise[]>([]);
 
+  const navigate = useNavigate();
+
   React.useEffect(() => {
-    getAllExercises().then((exercises) => setExercises(exercises));
+    getExercises()
+      .then((exercises) => setExercises(exercises));
   }, [])
 
   const onExerciseClick = (id: string) => {
-    history.push(`/exercise/${id}`);
+    navigate(`/exercise/${id}`);
   }
 
   return (

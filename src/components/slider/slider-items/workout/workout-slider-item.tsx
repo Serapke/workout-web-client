@@ -1,11 +1,11 @@
 import * as React from "react";
-import { withRouter, RouteComponentProps } from "react-router-dom";
 import { Workout } from "../../../../store/types";
 import { makeStyles, Box } from "@material-ui/core";
+import { useNavigate } from "react-router-dom";
 
-type OwnProps = RouteComponentProps & {
-  item: Workout;
-};
+interface OwnProps {
+  item: Workout
+}
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -18,11 +18,14 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const WorkoutSliderItem: React.FC<OwnProps> = ({ item, history }) => {
+const WorkoutSliderItem: React.FC<OwnProps> = ({ item }) => {
   const classes = useStyles();
+  const navigate = useNavigate();
+
   const handleOnClick = () => {
-    history.push(`/workout/${item.id}`);
+    navigate(`/workout/${item.id}`)
   };
+
   return (
     <Box
       className={classes.container}
@@ -36,4 +39,4 @@ const WorkoutSliderItem: React.FC<OwnProps> = ({ item, history }) => {
   );
 };
 
-export default withRouter(WorkoutSliderItem);
+export default WorkoutSliderItem;

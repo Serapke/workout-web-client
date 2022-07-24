@@ -1,8 +1,9 @@
 import * as React from "react";
 
-import { AppBar, Toolbar, IconButton, makeStyles, Typography, Button } from "@material-ui/core";
+import { AppBar, Toolbar, IconButton, makeStyles, Typography, Link } from "@material-ui/core";
 import { Menu } from "@material-ui/icons";
 import Drawer from "./drawer";
+import { useAuth } from "../../hooks/useAuth";
 
 const useStyles = makeStyles((theme) => ({
   menuButton: {
@@ -15,6 +16,7 @@ const useStyles = makeStyles((theme) => ({
 
 const NavigationBar = () => {
   const classes = useStyles();
+  const auth = useAuth();
   const [drawerOpen, setDrawerOpen] = React.useState(false);
 
   return (
@@ -27,14 +29,20 @@ const NavigationBar = () => {
           aria-label="menu"
           onClick={() => setDrawerOpen(true)}
         >
-          <Menu />
+          <Menu/>
         </IconButton>
         <Typography variant="h6" className={classes.title}>
           Sportuok
         </Typography>
-        <Button color="inherit">Login</Button>
+        {
+          auth.user ? (
+            <Link color="inherit" onClick={auth.signOut}>Logout</Link>
+          ) : (
+            <Link color="inherit" href={"/login"}>Login</Link>
+          )
+        }
       </Toolbar>
-      <Drawer open={drawerOpen} onOpen={() => setDrawerOpen(true)} onClose={() => setDrawerOpen(false)} />
+      <Drawer open={drawerOpen} onOpen={() => setDrawerOpen(true)} onClose={() => setDrawerOpen(false)}/>
     </AppBar>
   );
 };

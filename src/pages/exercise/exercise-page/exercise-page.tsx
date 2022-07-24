@@ -1,15 +1,10 @@
-import { RouteComponentProps, Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import React from 'react';
 import { Box, Typography, createStyles, makeStyles, Theme, Button } from '@material-ui/core';
 import { getExercise, deleteExercise } from 'services/exercise';
 import { Exercise } from 'store/types';
 import { Edit, Delete } from '@material-ui/icons';
-
-interface RouteParams {
-  id: string;
-}
-
-type AllProps = RouteComponentProps<RouteParams>;
+import { useParams } from "react-router";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -22,19 +17,22 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
-const ExercisePage: React.FunctionComponent<AllProps> = ({ match, history }) => {
+const ExercisePage: React.FunctionComponent = () => {
   const classes = useStyles();
   const [exercise, setExercise] = React.useState<Exercise>();
+  const { id } = useParams();
+  const navigate = useNavigate();
 
   React.useEffect(() => {
-    getExercise(match.params.id).then((exercise) => setExercise(exercise));
-  }, [match.params.id]);
+    getExercise(id)
+      .then((exercise) => setExercise(exercise));
+  }, [id]);
 
-  if (!exercise) return <div></div>;
+  if (!exercise) return <div>Loading...</div>;
 
   const onDeleteClick = () => {
-    deleteExercise(match.params.id);
-    history.push('/exercises');
+    deleteExercise(id)
+      .then(() => navigate('/exercises'));
   }
 
   return (
@@ -42,7 +40,7 @@ const ExercisePage: React.FunctionComponent<AllProps> = ({ match, history }) => 
       <Box className={classes.header} display="flex" alignItems="center" justifyContent="space-between">
         <Typography variant="h4">{exercise.title}</Typography>
         <Box>
-          <Button color="secondary" component={Link} to={`/exercise/${match.params.id}/edit`} startIcon={<Edit />}>
+          <Button color="secondary" component={Link} to={`/exercise/${id}/edit`} startIcon={<Edit />}>
             EDIT
           </Button>
           <Button color="secondary" onClick={onDeleteClick} startIcon={<Delete />}>

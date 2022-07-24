@@ -1,7 +1,15 @@
 import * as React from "react";
-import { SwipeableDrawer, List, ListItem, ListItemIcon, ListItemText, makeStyles, SvgIconTypeMap } from "@material-ui/core";
-import { Home, Favorite, History, FitnessCenter } from "@material-ui/icons";
-import { Link, LinkProps } from "react-router-dom";
+import {
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+  makeStyles,
+  SvgIconTypeMap,
+  SwipeableDrawer
+} from "@material-ui/core";
+import { Favorite, FitnessCenter, History, Home } from "@material-ui/icons";
+import { Link } from "react-router-dom";
 import { OverridableComponent } from '@material-ui/core/OverridableComponent';
 
 interface OwnProps {
@@ -9,10 +17,6 @@ interface OwnProps {
   onOpen: () => void;
   onClose: () => void;
 }
-
-const AdapterLink = React.forwardRef<HTMLAnchorElement, LinkProps>((props, ref) => (
-  <Link innerRef={ref as any} {...props} />
-));
 
 const useStyles = makeStyles({
   list: {
@@ -26,7 +30,7 @@ const useStyles = makeStyles({
 interface LinkData {
   name: string;
   url: string;
-  icon: OverridableComponent<SvgIconTypeMap<{}, "svg">>;
+  icon: OverridableComponent<SvgIconTypeMap>;
 }
 
 const links: LinkData[] = [
@@ -59,7 +63,7 @@ const Drawer = ({ open, onOpen, onClose }: OwnProps) => {
       <div className={classes.list} role="presentation" onClick={onClose}>
         <List>
           {links.map(link => (
-            <ListItem key={link.name} component={AdapterLink} to={link.url}>
+            <ListItem key={link.name} component={Link} to={link.url}>
               <ListItemIcon>
                 <link.icon />
               </ListItemIcon>

@@ -1,30 +1,26 @@
 import * as React from "react";
 import { connect } from "react-redux";
-import { RouteComponentProps, Link } from "react-router-dom";
-import { Add } from "@material-ui/icons";
-import { makeStyles, Theme, createStyles, Button, TextField, InputAdornment, Typography } from "@material-ui/core";
+import { Button, createStyles, InputAdornment, makeStyles, TextField, Theme, Typography } from "@material-ui/core";
 import { WorkoutForm } from "../../../store/form/types";
 import {
+  clearWorkoutFormRequest,
   fetchWorkoutRequest,
   updateTasksRequest,
   updateWorkoutFormRequest,
-  clearWorkoutFormRequest,
 } from "../../../store/form/thunks";
 import { showModalRequest } from "../../../store/modal/thunks";
-import { fabKeyboardStyles, onInputFocusHideFab, onInputBlurShowFab } from "../../../utils/ui-utils";
+import { fabKeyboardStyles, onInputBlurShowFab, onInputFocusHideFab } from "../../../utils/ui-utils";
 import { ModalType } from "../../../components/modal/modal";
 import { formToWorkout } from "../../../store/form/utils";
 import { updateWorkout } from "../../../services/workout";
 import TaskList from "../../../components/task-list";
 import { ApplicationState } from "../../../store";
-
-interface RouteParams {
-  id: string;
-}
+import { useParams } from "react-router";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Add } from "@material-ui/icons";
 
 interface PropsFromState {
   form: WorkoutForm;
-  id: number;
 }
 
 interface PropsFromDispatch {
@@ -35,7 +31,8 @@ interface PropsFromDispatch {
   clearForm: typeof clearWorkoutFormRequest;
 }
 
-type AllProps = PropsFromState & PropsFromDispatch & RouteComponentProps<RouteParams>;
+type AllProps = PropsFromState & PropsFromDispatch;
+
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -72,24 +69,23 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 const WorkoutEditPage: React.FunctionComponent<AllProps> = ({
-  id,
-  form,
-  location,
-  history,
-  match,
-  fetchWorkout,
-  showModal,
-  updateTasks,
-  updateForm,
-  clearForm,
-}) => {
+                                                              form,
+                                                              fetchWorkout,
+                                                              showModal,
+                                                              updateTasks,
+                                                              updateForm,
+                                                              clearForm,
+                                                            }) => {
   const classes = useStyles();
   const fabClass = fabKeyboardStyles();
+
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const location = useLocation();
+
   React.useEffect(() => {
-    if (id !== parseInt(match.params.id)) {
-      fetchWorkout(match.params.id);
-    }
-  }, [fetchWorkout, id, match.params.id]);
+    fetchWorkout(id);
+  }, [fetchWorkout, id]);
 
   if (!form) return <div>Loading...</div>;
 
@@ -105,13 +101,13 @@ const WorkoutEditPage: React.FunctionComponent<AllProps> = ({
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const workout = formToWorkout(form, id);
+    const workout = formToWorkout(form, parseInt(id));
     updateWorkout(workout).then((res) => {
       if (res.errors) {
         console.log(res.errors);
       } else {
         clearForm();
-        history.push(`/workout/${match.params.id}`);
+        navigate(`/workout/${id}`);
       }
     });
   };
@@ -144,12 +140,13 @@ const WorkoutEditPage: React.FunctionComponent<AllProps> = ({
           color="secondary"
           variant="contained"
           component={Link}
-          to={{ pathname: "/exercise/select", state: { from: location } }}
+          state={{ from: location }}
+          to="/exercise/select"
         >
-          <Add fontSize="large" />
+          <Add fontSize="large"/>
         </Button>
         <div className={classes.tasks}>
-          <TaskList tasks={form.tasks.value} editable showModal={showModal} updateTasks={updateTasks} />
+          <TaskList tasks={form.tasks.value} editable showModal={showModal} updateTasks={updateTasks}/>
         </div>
         <Button id="fab" className={classes.cta} color="secondary" variant="contained" type="submit">
           Save
@@ -160,8 +157,7 @@ const WorkoutEditPage: React.FunctionComponent<AllProps> = ({
 };
 
 const mapStateToProps = ({ form }: ApplicationState) => ({
-  form: form.workout.form,
-  id: form.workout.id,
+  form: form.workout.form
 });
 
 const mapDispatchToProps = {

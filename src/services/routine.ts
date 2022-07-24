@@ -1,6 +1,6 @@
 import { Routine } from "../store/types";
+import { apiRequest } from "./api-request";
 
-export const getAllRoutines: () => Promise<Routine[]> = async () => {
-  const response = await fetch(`${process.env.REACT_APP_API_URL}/routine`);
-  return response.json();
+export const getRoutines: () => Promise<Routine[]> = async () => {
+  return apiRequest(`routine`);
 };

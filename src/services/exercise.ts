@@ -1,45 +1,35 @@
 import { ApiResponse } from "./types";
 import { Exercise, BodyPart } from "../store/types";
+import { apiRequest } from "./api-request";
 
-export const getAllExercises: () => Promise<Exercise[]> = async () => {
-  const response = await fetch(`${process.env.REACT_APP_API_URL}/exercise`);
-  return response.json();
+export const getExercises: () => Promise<Exercise[]> = async () => {
+  return apiRequest(`exercise`);
 };
 
 export const getExercise: (id: string) => Promise<Exercise> = async (id) => {
-  const response = await fetch(`${process.env.REACT_APP_API_URL}/exercise/${id}`);
-  return response.json();
+  return apiRequest(`exercise/${id}`);
 }
 
 export const getBodyParts: () => Promise<BodyPart[]> = async () => {
-  const response = await fetch(`${process.env.REACT_APP_API_URL}/exercise/body-parts`);
-  return response.json();
+  return apiRequest(`exercise/body-parts`);
 };
 
 export const createExercise: (exercise: Exercise) => Promise<ApiResponse> = async (exercise) => {
-  const response = await fetch(`${process.env.REACT_APP_API_URL}/exercise/create`, {
+  return apiRequest(`exercise/create`, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
     body: JSON.stringify(exercise),
   });
-  return response.json();
 };
 
 export const updateExercise: (exercise: Exercise) => Promise<ApiResponse> = async (exercise) => {
-  const response = await fetch(`${process.env.REACT_APP_API_URL}/exercise/update`, {
+  return apiRequest(`exercise/update`, {
     method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-    },
     body: JSON.stringify(exercise),
   });
-  return response.json();
 }
 
 export const deleteExercise: (id: string) => Promise<any> = async (id) => {
-  fetch(`${process.env.REACT_APP_API_URL}/exercise/${id}`, {
+  return apiRequest(`exercise/${id}`, {
     method: 'DELETE'
   });
 }

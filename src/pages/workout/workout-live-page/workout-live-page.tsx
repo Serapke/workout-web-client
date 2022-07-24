@@ -1,5 +1,4 @@
 import * as React from "react";
-import { RouteComponentProps } from "react-router-dom";
 
 import { WorkoutStatus } from 'services/types';
 import ExerciseState from './workout-exercise-state';
@@ -7,22 +6,24 @@ import WorkoutRestState from './workout-rest-state';
 import { Box } from '@material-ui/core';
 import WorkoutTime from './components/workout-time';
 import Button from './components/button';
-import { getActiveWorkoutStatus, updateWorkoutDuration, finishWorkout, continueWorkout, discardWorkout } from 'services/live-workout';
+import {
+  continueWorkout,
+  discardWorkout,
+  finishWorkout,
+  getActiveWorkoutStatus,
+  updateWorkoutDuration
+} from 'services/live-workout';
 import ExitLiveWorkoutDialog from './components/exit-live-workout-dialog';
-
-interface RouteParams {
-  id: string;
-}
+import { useParams } from "react-router";
+import { usePrompt } from "../../../hooks/usePrompt";
+import { useNavigate } from "react-router-dom";
 
 enum WorkoutPageState {
   EXERCISE,
   REST
 }
 
-type AllProps = RouteComponentProps<RouteParams>;
-
-
-const WorkoutLivePage: React.FunctionComponent<AllProps> = ({ match, history }) => {
+const WorkoutLivePage: React.FunctionComponent = () => {
   const [status, updateStatus] = React.useState<WorkoutStatus>();
   const [setIndex, updateSetIndex] = React.useState<number>();
   const [setsDone, updateSetsDone] = React.useState<number[]>([]);
@@ -31,24 +32,38 @@ const WorkoutLivePage: React.FunctionComponent<AllProps> = ({ match, history }) 
   const [duration, setDuration] = React.useState<number>();
   const [navigationPathname, setNavigationPathname] = React.useState<string>(null);
 
+  const { id } = useParams();
+  const navigate = useNavigate();
+
   React.useEffect(() => {
-    getActiveWorkoutStatus(match.params.id).then((status) => updateStatus(status));
+    getActiveWorkoutStatus(id).then((status) => updateStatus(status));
     updateSetIndex(0);
-  }, [match.params.id]);
+  }, [id]);
 
-  React.useEffect(() => {
-    const unblock = history.block((tx, action) => {
-      if (action === "POP") {
-        setNavigationPathname(tx.pathname);
-        setPaused(true);
-        return false;
-      }
-    });
+  usePrompt((tx) => {
+    if (tx.action === "POP") {
+      setNavigationPathname(tx.location.pathname);
+      setPaused(true);
+      return false;
+    } else {
+      return true;
+    }
+  });
 
-    return () => {
-      unblock();
-    };
-  }, [history]);
+  // React.useEffect(() => {
+  //   //   const unblock = history.block((tx, action) => {
+  //   //     if (action === "POP") {
+  //   //       setNavigationPathname(tx.pathname);
+  //   //       setPaused(true);
+  //   //       return false;
+  //   //     }
+  //   //   });
+  //   //
+  //   //   return () => {
+  //   //     unblock();
+  //   //   };
+  //   // }, [history]
+  // );
 
   if (!status) return <div/>;
 
@@ -75,7 +90,7 @@ const WorkoutLivePage: React.FunctionComponent<AllProps> = ({ match, history }) 
     } else {
       updateWorkoutDuration(status.id, duration);
       finishWorkout(status.id, setsDone).then(() => {
-        history.replace(`/workout/${match.params.id}/result/${status.id}`);
+        navigate(`/workout/${id}/result/${status.id}`);
       })
     }
   }
@@ -105,26 +120,32 @@ const WorkoutLivePage: React.FunctionComponent<AllProps> = ({ match, history }) 
   const onExitClick = () => {
     discardWorkout(status.id).then(() => {
       // remove live workout link from history, so it won't be impossible to start using "back" button
-      history.replace(navigationPathname ? navigationPathname : `/favorites`)
+      navigate(navigationPathname ? navigationPathname : `/favorites`)
     });
   }
 
   let stateComponent: JSX.Element;
 
   if (pageState === WorkoutPageState.EXERCISE) {
-    stateComponent = <ExerciseState task={status.currentTask} setIndex={setIndex} paused={paused} togglePause={togglePause} />
+    stateComponent =
+      <ExerciseState task={status.currentTask} setIndex={setIndex} paused={paused} togglePause={togglePause}/>
   } else {
-    stateComponent = <WorkoutRestState rest={status.rest} nextTask={status.nextTask} paused={paused} />
+    stateComponent = <WorkoutRestState rest={status.rest} nextTask={status.nextTask} paused={paused}/>
   }
 
   const hasMoreSets = status.nextTask || setIndex !== status.currentTask.setsGoal.length - 1;
 
   return (
     <Box>
-      <WorkoutTime duration={status.duration} paused={paused} onPauseClick={togglePause} updateDuration={updateDuration} />
+      <WorkoutTime
+        duration={status.duration}
+        paused={paused}
+        onPauseClick={togglePause}
+        updateDuration={updateDuration}
+      />
       {stateComponent}
       <Button disabled={paused} onClick={onNextClick}>{hasMoreSets ? `Next` : `Finish`}</Button>
-      <ExitLiveWorkoutDialog open={paused} onContinue={onContinueClick} onExit={onExitClick} />
+      <ExitLiveWorkoutDialog open={paused} onContinue={onContinueClick} onExit={onExitClick}/>
     </Box>
   );
 }

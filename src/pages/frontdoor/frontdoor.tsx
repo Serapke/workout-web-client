@@ -1,23 +1,20 @@
 import * as React from "react";
-import { makeStyles, Button } from "@material-ui/core";
+import { Box, Button, Typography } from "@material-ui/core";
 import { Link } from "react-router-dom";
-
-const useStyles = makeStyles((theme) => ({
-  container: {
-    padding: theme.spacing(2),
-  },
-}));
+import { useAuth } from "../../hooks/useAuth";
 
 const Frontdoor = () => {
-  const classes = useStyles();
+  const auth = useAuth();
+
   return (
-    <div className={classes.container}>
-      <div>Workout link</div>
-      <div>Plans carousel</div>
-      <Button variant="contained" color="secondary" component={Link} to="/favorites" fullWidth>
-        Favorites
-      </Button>
-    </div>
+    <Box padding={2}>
+      <Typography variant="h2">Welcome to Sportuok{auth.user && `, ${auth.user.firstName}`}</Typography>
+      <Box>
+        <Button variant="contained" color="secondary" component={Link} to="/favorites">
+          Favorites
+        </Button>
+      </Box>
+    </Box>
   );
 };
 

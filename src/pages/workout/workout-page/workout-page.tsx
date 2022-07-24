@@ -1,18 +1,13 @@
 import * as React from "react";
 import { connect } from "react-redux";
-import { RouteComponentProps, Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import { Typography, Button, Box, makeStyles, Theme, createStyles, Chip, Fab } from "@material-ui/core";
 import { Workout } from "../../../store/types";
 import { getWorkout, deleteWorkout } from "../../../services/workout";
 import { ApplicationState } from "../../../store";
 import { Edit, Delete } from '@material-ui/icons';
 import TaskList from './components/task-list';
-
-interface RouteParams {
-  id: string;
-}
-
-type AllProps = RouteComponentProps<RouteParams>;
+import { useParams } from "react-router";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -32,23 +27,25 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
-const WorkoutPage: React.FunctionComponent<AllProps> = ({ match, history }) => {
+const WorkoutPage: React.FunctionComponent<void> = () => {
   const classes = useStyles();
-  const [workout, updateWorkout] = React.useState<Workout>();
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const [workout, setWorkout] = React.useState<Workout>();
 
   React.useEffect(() => {
-    getWorkout(match.params.id).then((workout) => updateWorkout(workout));
-  }, [match.params.id]);
+    getWorkout(id).then((workout) => setWorkout(workout));
+  }, [id]);
 
   if (!workout) return <div>Loading...</div>;
 
   const onStartClick = () => {
-    history.push(`/workout/${match.params.id}/live`);
+    navigate(`/workout/${id}/live`);
   }
 
   const onDeleteClick = () => {
-    deleteWorkout(match.params.id);
-    history.push('/favorites');
+    deleteWorkout(id)
+      .then(() => navigate('/'));
   }
 
   return (
@@ -56,7 +53,7 @@ const WorkoutPage: React.FunctionComponent<AllProps> = ({ match, history }) => {
       <Box className={classes.header} display="flex" alignItems="center" justifyContent="space-between">
         <Typography variant="h4">{workout.title}</Typography>
         <Box>
-          <Button color="secondary" component={Link} to={`/workout/${match.params.id}/edit`} startIcon={<Edit />}>
+          <Button color="secondary" component={Link} to={`/workout/${id}/edit`} startIcon={<Edit />}>
             EDIT
           </Button>
           <Button color="secondary" onClick={onDeleteClick} startIcon={<Delete />}>
@@ -66,7 +63,7 @@ const WorkoutPage: React.FunctionComponent<AllProps> = ({ match, history }) => {
       </Box>
       <Box className={classes.restBox}>
         <Typography variant="subtitle1" gutterBottom>
-          Rest between exercises: <Chip label={`${workout.restPeriodInSeconds} seconds`}></Chip>
+          Rest between exercises: <Chip label={`${workout.restPeriodInSeconds} seconds`}/>
         </Typography>
       </Box>
       <Box>

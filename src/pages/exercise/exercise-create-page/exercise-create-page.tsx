@@ -1,32 +1,28 @@
 import * as React from "react";
 import { Typography, Box } from "@material-ui/core";
-import { RouteComponentProps } from "react-router-dom";
 import { Exercise, BodyPart } from "../../../store/types";
 import { createExercise, getBodyParts } from "../../../services/exercise";
 import ExerciseForm, { EMPTY_FORM, FormState } from '../components/exercise-form';
+import { useParams } from "react-router";
+import { useNavigate } from "react-router-dom";
 
-interface RouteParams {
-  id: string;
-}
 
-type OwnProps = RouteComponentProps<RouteParams>;
-
-const ExerciseCreatePage = ({ match, history }: OwnProps) => {
+const ExerciseCreatePage = () => {
   const [bodyParts, setBodyParts] = React.useState<BodyPart[]>();
   const [form, setForm] = React.useState<FormState>(EMPTY_FORM);
 
+  const { id } = useParams();
+  const navigate = useNavigate();
+
   React.useEffect(() => {
-    getBodyParts().then(bodyParts => setBodyParts(bodyParts));
-  }, [match.params.id]);
+    getBodyParts()
+      .then(bodyParts => setBodyParts(bodyParts));
+  }, [id]);
 
   const onFormSubmit = (exercise: Exercise) => {
-    createExercise(exercise).then((res) => {
-      if (res.errors) {
-        console.error(res.errors);
-      } else {
-        history.goBack();
-      }
-    });
+    createExercise(exercise)
+      .then(() => navigate(-1))
+      .catch(errors => console.error(errors));
   };
 
   return (

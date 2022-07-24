@@ -1,15 +1,22 @@
 import * as React from "react";
 import { getWorkoutHistories as getWorkoutHistory } from 'services/workout-history';
 import { WorkoutHistory } from 'services/types';
-import { Box, Typography, Card, CardContent, Avatar, makeStyles, Theme, createStyles, Chip } from '@material-ui/core';
-import { Timeline, TimelineItem, TimelineOppositeContent, TimelineSeparator, TimelineConnector, TimelineContent } from '@material-ui/lab';
+import { Box, Typography, Card, CardContent, Avatar, makeStyles, createStyles, Chip } from '@material-ui/core';
+import {
+  Timeline,
+  TimelineItem,
+  TimelineOppositeContent,
+  TimelineSeparator,
+  TimelineConnector,
+  TimelineContent
+} from '@material-ui/lab';
 import { FitnessCenter, Watch } from '@material-ui/icons';
 import { formatTime } from 'utils/time';
-import { RouteComponentProps } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 
-type AllProps = RouteComponentProps & {}
+type AllProps = { };
 
-const useStyles = makeStyles((theme: Theme) =>
+const useStyles = makeStyles(() =>
   createStyles({
     timeline: {
       padding: 0,
@@ -43,18 +50,21 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 )
 
-const HistoryPage: React.FunctionComponent<AllProps> = ({ history }) => {
+const HistoryPage: React.FunctionComponent<AllProps> = () => {
   const classes = useStyles();
   const [workoutHistory, updateWorkoutHistory] = React.useState<WorkoutHistory[]>([]);
+  const navigate = useNavigate();
 
   React.useEffect(() => {
-    getWorkoutHistory().then((h) => updateWorkoutHistory(h));
+    getWorkoutHistory()
+      .then((h) => updateWorkoutHistory(h))
+      .catch(error => console.error(error));
   }, [workoutHistory.length]);
 
-  if (!workoutHistory) return <div></div>;
+  if (!workoutHistory) return <div/>;
 
   const onCardClick = (id: number, workoutId: number) => {
-    history.push(`/workout/${workoutId}/result/${id}`);
+    navigate(`/workout/${workoutId}/result/${id}`);
   }
 
   return (
@@ -75,14 +85,14 @@ const HistoryPage: React.FunctionComponent<AllProps> = ({ history }) => {
                   )}
                 </TimelineOppositeContent>
                 <TimelineSeparator classes={{ root: classes.timelineSeparator }}>
-                  <TimelineConnector />
+                  <TimelineConnector/>
                 </TimelineSeparator>
                 <TimelineContent classes={{ root: classes.timelineContent }}>
                   <Card onClick={() => onCardClick(item.id, item.workoutId)}>
                     <CardContent classes={{ root: classes.cardContent }}>
                       <Box display="flex" alignItems="center">
                         <Avatar>
-                          <FitnessCenter />
+                          <FitnessCenter/>
                         </Avatar>
                         <Box display="flex" flexDirection="column" pl={2} width="100%">
                           <Box mb={1}>
@@ -90,13 +100,15 @@ const HistoryPage: React.FunctionComponent<AllProps> = ({ history }) => {
                           </Box>
                           <Box display="flex" alignItems="center" justifyContent="space-between">
                             <Box display="flex">
-                              <Watch fontSize="small" style={{ color: "#bdbdbd" }} />
-                              <Typography classes={{ root: classes.duration }} variant="subtitle2">{formatTime(item.duration)}</Typography>
+                              <Watch fontSize="small" style={{ color: "#bdbdbd" }}/>
+                              <Typography classes={{ root: classes.duration }}
+                                          variant="subtitle2">{formatTime(item.duration)}</Typography>
                             </Box>
                             {item.emotion &&
-                              <Box>
-                                <Chip size="small" color="secondary" label={`#${item.emotion.toString().toLowerCase()}`} />
-                              </Box>
+                                <Box>
+                                    <Chip size="small" color="secondary"
+                                          label={`#${item.emotion.toString().toLowerCase()}`}/>
+                                </Box>
                             }
                           </Box>
                         </Box>

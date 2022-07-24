@@ -1,13 +1,8 @@
 import * as React from "react";
-import { withRouter, RouteComponentProps } from "react-router-dom";
 
-import { Routine } from "../../../../store/types";
+type AllProps = any;
 
-type OwnProps = RouteComponentProps & {
-  item: Routine;
-};
-
-const RoutineSliderItem: React.FC<OwnProps> = ({ item }) => {
+const RoutineSliderItem: React.FC<AllProps> = ({ item }) => {
   return (
     <div>
       <div>{item.title}</div>
@@ -15,4 +10,4 @@ const RoutineSliderItem: React.FC<OwnProps> = ({ item }) => {
   );
 };
 
-export default withRouter(RoutineSliderItem);
+export default RoutineSliderItem;

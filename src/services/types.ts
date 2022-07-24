@@ -1,9 +1,21 @@
 import { Exercise } from 'store/types';
 
+export interface Error {
+  code: string,
+  message: string
+}
+
 export interface ApiResponse {
   status: string;
-  errors?: any;
   id: number;
+  errors?: Error[];
+}
+
+export interface User {
+  id: number;
+  email: string
+  firstName: string
+  lastName: string
 }
 
 export interface WorkoutStatus {
