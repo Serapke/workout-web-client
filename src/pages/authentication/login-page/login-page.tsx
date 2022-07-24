@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Box, Button, TextField, Typography } from "@material-ui/core";
+import { Box, Button, Container, TextField, Typography } from "@material-ui/core";
 import { useAuth } from "../../../hooks/useAuth";
 import { useLocation, useNavigate } from "react-router-dom";
 
@@ -68,8 +68,6 @@ const LoginPage: React.FunctionComponent<AllProps> = () => {
   const state = location.state as { from: Location };
   const from = state ? state.from.pathname : '/';
 
-  console.log(from);
-
   const onFormSubmit = (email, password) => {
     auth.signIn(email, password)
       .then(() => {
@@ -81,12 +79,12 @@ const LoginPage: React.FunctionComponent<AllProps> = () => {
   }
 
   return (
-    <Box display="flex" flexDirection="column" alignItems="center">
+    <Container maxWidth="sm">
       <Typography variant="h2">Login to Sportuok</Typography>
-      <Box width={600}>
+      <Box>
         <LoginForm onSubmit={onFormSubmit}/>
       </Box>
-    </Box>
+    </Container>
   );
 };
 
