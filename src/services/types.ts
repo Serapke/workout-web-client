@@ -5,10 +5,11 @@ export interface Error {
   message: string
 }
 
-export interface ApiResponse {
+export interface ApiResponse<T> {
   status: string;
   id: number;
   errors?: Error[];
+  data?: T
 }
 
 export interface User {

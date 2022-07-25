@@ -18,7 +18,7 @@ export interface Task {
 }
 
 export interface Exercise {
-  id: string;
+  id: number;
   title: string;
   description: {
     startingPosition: string;

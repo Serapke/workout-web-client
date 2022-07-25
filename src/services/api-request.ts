@@ -20,7 +20,7 @@ export const apiRequest: (url: string, options?: RequestInit) => Promise<any> = 
 
   return fetch(`${process.env.REACT_APP_API_URL}/${url}`, updatedOptions)
     .then(response => {
-      return response.json().then((json: ApiResponse) => {
+      return response.json().then((json: ApiResponse<any>) => {
         if (response.status === 401) {
           window.location.href = '/login';
         } else if (!response.ok) {

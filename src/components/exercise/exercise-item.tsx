@@ -8,8 +8,8 @@ interface OwnProps {
   exercise: Exercise;
   selected?: boolean;
   selectable?: boolean;
-  onClick?: (id: string) => void;
-  onSelect?: (id: string) => void;
+  onClick?: (id: number) => void;
+  onSelect?: (id: number) => void;
   onIconClick?: (exercise: Exercise) => void;
 }
 

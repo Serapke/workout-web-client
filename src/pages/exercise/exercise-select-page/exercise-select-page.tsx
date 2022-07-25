@@ -76,7 +76,7 @@ const ExerciseSelectPage = ({
                               saveWorkoutTasks,
                             }: AllProps) => {
   const [searchQuery, setSearchQuery] = React.useState<string>("");
-  const [selectedItems, setSelectedItems] = React.useState<string[]>([]);
+  const [selectedItems, setSelectedItems] = React.useState<number[]>([]);
   const [selectedBodyParts, setSelectedBodyParts] = React.useState<BodyPart[]>([]);
   const [open, setOpen] = React.useState(false);
   const [openedExercise, setOpenedExercise] = React.useState<Exercise>(null);
@@ -103,7 +103,7 @@ const ExerciseSelectPage = ({
     setOpenedExercise(null);
   };
 
-  const onExerciseClick = (id: string) => {
+  const onExerciseClick = (id: number) => {
     if (isSelected(id)) {
       setSelectedItems((prevState) => removeItem(prevState, { index: selectedItems.indexOf(id) }));
     } else {
@@ -111,7 +111,7 @@ const ExerciseSelectPage = ({
     }
   };
 
-  const isSelected = (id: string) => {
+  const isSelected = (id: number) => {
     return selectedItems.includes(id);
   };
 

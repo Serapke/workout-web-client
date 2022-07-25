@@ -28,7 +28,7 @@ const ExerciseEditPage: React.FunctionComponent = () => {
   if (!exercise) return <div>Loading...</div>;
 
   const onFormSubmit = (exercise: Exercise) => {
-    exercise.id = id;
+    exercise.id = parseInt(id);
     updateExercise(exercise)
       .then(() => navigate(`/exercise/${id}`))
       .catch(errors => console.error(errors));

@@ -23,7 +23,7 @@ export const updateWorkoutFormRequest = (field: Field): AppThunk => (dispatch) =
   dispatch(updateWorkoutForm(field));
 };
 
-export const addExercisesToWorkoutRequest = (exerciseIDs: string[]): AppThunk => async (dispatch, getState) => {
+export const addExercisesToWorkoutRequest = (exerciseIDs: number[]): AppThunk => async (dispatch, getState) => {
   const state = getState();
   const newTasks = exerciseIDs.map((exerciseID) => mapExerciseIDToTask(exerciseID, state));
   const oldTasks = state.form.workout.form.tasks.value;
@@ -41,7 +41,7 @@ export const updateTaskRequest = (task: Task): AppThunk => async (dispatch, getS
   dispatch(updateWorkoutForm({ name: "tasks", state: { value: tasks } }));
 };
 
-const mapExerciseIDToTask = (exerciseID: string, state: ApplicationState): Task => {
+const mapExerciseIDToTask = (exerciseID: number, state: ApplicationState): Task => {
   const exercise = state.content.exercises.find((exercise) => exercise.id === exerciseID);
   return { id: null, exercise: exercise, sets: [exercise.defaultQuantity] };
 };

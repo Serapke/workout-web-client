@@ -98,6 +98,7 @@ const WorkoutCreatePage = ({ form, showModal, updateTasks, updateForm, clearForm
         });
       } else {
         clearForm();
+        // TODO: show Snackbar with created workout title
         navigate("/favorites");
       }
     });

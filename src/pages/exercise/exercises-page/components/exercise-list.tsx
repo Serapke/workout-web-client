@@ -5,7 +5,7 @@ import ExerciseItem from 'components/exercise';
 
 interface OwnProps {
   exercises: Exercise[];
-  onExerciseClick: (id: string) => void;
+  onExerciseClick: (id: number) => void;
 }
 
 const ExerciseList = ({ exercises, onExerciseClick }: OwnProps) => {

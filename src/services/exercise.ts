@@ -14,14 +14,14 @@ export const getBodyParts: () => Promise<BodyPart[]> = async () => {
   return apiRequest(`exercise/body-parts`);
 };
 
-export const createExercise: (exercise: Exercise) => Promise<ApiResponse> = async (exercise) => {
+export const createExercise: (exercise: Exercise) => Promise<ApiResponse<any>> = async (exercise) => {
   return apiRequest(`exercise/create`, {
     method: "POST",
     body: JSON.stringify(exercise),
   });
 };
 
-export const updateExercise: (exercise: Exercise) => Promise<ApiResponse> = async (exercise) => {
+export const updateExercise: (exercise: Exercise) => Promise<ApiResponse<any>> = async (exercise) => {
   return apiRequest(`exercise/update`, {
     method: "PUT",
     body: JSON.stringify(exercise),

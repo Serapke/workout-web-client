@@ -25,7 +25,7 @@ const ExercisesPage: React.FunctionComponent = () => {
       .then((exercises) => setExercises(exercises));
   }, [])
 
-  const onExerciseClick = (id: string) => {
+  const onExerciseClick = (id: number) => {
     navigate(`/exercise/${id}`);
   }
 
