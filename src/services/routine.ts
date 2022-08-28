@@ -6,6 +6,6 @@ export const getRoutines: () => Promise<Routine[]> = async () => {
   return apiRequest(`routine`).then((response: ApiResponse<MyRoutinesResponse>) => response.data.routines);
 };
 
-export interface MyRoutinesResponse {
+interface MyRoutinesResponse {
   routines: Routine[]
 }
