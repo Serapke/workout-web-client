@@ -48,11 +48,11 @@ export const deleteWorkout: (id: string) => Promise<void> = async (id) => {
     .then((response: ApiResponse<void>) => response.data);
 }
 
-export interface MyWorkoutsResponse {
+interface MyWorkoutsResponse {
   workouts: Workout[]
 }
 
-export interface WorkoutCreateResponse {
+interface WorkoutCreateResponse {
   id: number
 }
 
