@@ -44,7 +44,8 @@ export const updateWorkout: (workout: Workout) => Promise<ApiResponse<Workout>> 
 };
 
 export const deleteWorkout: (id: string) => Promise<void> = async (id) => {
-  return apiRequest(`workout/${id}`, { method: "DELETE" });
+  return apiRequest(`workout/${id}`, { method: "DELETE" })
+    .then((response: ApiResponse<void>) => response.data);
 }
 
 export interface MyWorkoutsResponse {
