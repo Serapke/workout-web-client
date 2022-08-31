@@ -1,6 +1,7 @@
 import { ACCESS_TOKEN } from "../constants";
 import { User } from "./types";
 import { apiRequest } from "./api-request";
+import runtimeEnv from '@mars/heroku-js-runtime-env';
 
 export interface SuccessfulLoginResponse {
   accessToken: string
@@ -20,7 +21,8 @@ type LoginResponse = SuccessfulLoginResponse & FailureLoginResponse
 
 export const login: (email: string, password: string) => Promise<void> = async (email, password) => {
   const request = { email, password };
-  return fetch(`${process.env.REACT_APP_API_URL}/auth/login`, {
+  const env = runtimeEnv();
+  return fetch(`${env.REACT_APP_API_URL}/auth/login`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
