@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Typography, Chip, makeStyles, Theme, createStyles } from '@material-ui/core';
+import { Box, Chip, createStyles, makeStyles, Theme, Typography } from '@material-ui/core';
 import { Exercise } from 'store/types';
 import Dialog from 'components/dialogs/dialog';
 
@@ -12,12 +12,12 @@ interface OwnProps {
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     chip: {
-      marginLeft: "4px",
+      marginLeft: theme.spacing(0.5),
     },
   })
 )
 
-const ExerciseDialog = ({ open, exercise, handleClose }: OwnProps) => {
+const ExerciseDetailsDialog = ({ open, exercise, handleClose }: OwnProps) => {
   const classes = useStyles();
 
   if (!exercise) {
@@ -25,7 +25,7 @@ const ExerciseDialog = ({ open, exercise, handleClose }: OwnProps) => {
   }
 
   return (
-    <Dialog open={open} handleClose={handleClose} fullScreen>
+    <Dialog open={open} title="Exercise details" handleClose={handleClose} fullScreen>
       {exercise && <Box p={3}>
         <Box mb={2}>
           <Typography variant="h4">{exercise.title}</Typography>
@@ -50,4 +50,4 @@ const ExerciseDialog = ({ open, exercise, handleClose }: OwnProps) => {
   )
 }
 
-export default ExerciseDialog;
+export default ExerciseDetailsDialog;

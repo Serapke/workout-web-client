@@ -1,11 +1,11 @@
-import { Routine} from "../store/types";
+import { Routine } from "../store/types";
 import { apiRequest } from "./api-request";
 import { ApiResponse } from "./types";
 
-export const getRoutines: () => Promise<Routine[]> = async () => {
-  return apiRequest(`routine`).then((response: ApiResponse<MyRoutinesResponse>) => response.data.routines);
-};
+export function fetchRoutinesData(): Promise<ApiResponse<MyRoutinesResponse>> {
+  return apiRequest(`routine`);
+}
 
-interface MyRoutinesResponse {
+export interface MyRoutinesResponse {
   routines: Routine[]
 }

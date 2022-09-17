@@ -18,13 +18,10 @@
     "react": "^16.14.0",
     "react-beautiful-dnd": "^13.0.0",
     "react-dom": "^16.14.0",
-    "react-redux": "^7.2.2",
     "react-router": "^6.2.1",
     "react-router-dom": "^6.2.1",
     "react-scripts": "^5.0.0",
     "react-slick": "^0.28.0",
-    "redux-devtools-extension": "^2.13.8",
-    "redux-thunk": "^2.3.0",
     "typescript": "^3.9.7"
   },
   "scripts": {
@@ -50,7 +47,6 @@
   },
   "devDependencies": {
     "@types/react-beautiful-dnd": "^13.0.0",
-    "@types/react-redux": "^7.1.16",
     "@types/react-slick": "^0.23.4"
   }
 }

@@ -1,13 +1,11 @@
 import * as React from "react";
-import { connect } from "react-redux";
 import { Link, useNavigate } from "react-router-dom"
-import { Typography, Button, Box, makeStyles, Theme, createStyles, Chip, Fab } from "@material-ui/core";
-import { Workout } from "../../../store/types";
-import { getWorkout, deleteWorkout } from "../../../services/workout";
-import { ApplicationState } from "../../../store";
-import { Edit, Delete } from '@material-ui/icons';
+import { Box, Button, Chip, createStyles, Fab, makeStyles, Theme, Typography } from "@material-ui/core";
+import { deleteWorkout } from "../../../services/workout";
+import { Delete, Edit } from '@material-ui/icons';
 import TaskList from './components/task-list';
 import { useParams } from "react-router";
+import { useHandleWorkoutDataRequest } from "../../../hooks/use-handle-workout-data-request";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -27,17 +25,13 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
-const WorkoutPage: React.FunctionComponent<void> = () => {
+const WorkoutPage = () => {
   const classes = useStyles();
   const { id } = useParams();
   const navigate = useNavigate();
-  const [workout, setWorkout] = React.useState<Workout>();
+  const workoutRequestData = useHandleWorkoutDataRequest(id);
 
-  React.useEffect(() => {
-    getWorkout(id).then((workout) => setWorkout(workout));
-  }, [id]);
-
-  if (!workout) return <div>Loading...</div>;
+  if (!workoutRequestData.workout) return <div>Loading...</div>;
 
   const onStartClick = () => {
     navigate(`/workout/${id}/live`);
@@ -45,13 +39,13 @@ const WorkoutPage: React.FunctionComponent<void> = () => {
 
   const onDeleteClick = () => {
     deleteWorkout(id)
-      .then(() => navigate('/'));
+      .then(() => navigate('/favorites'));
   }
 
   return (
     <div>
       <Box className={classes.header} display="flex" alignItems="center" justifyContent="space-between">
-        <Typography variant="h4">{workout.title}</Typography>
+        <Typography variant="h4">{workoutRequestData.workout.title}</Typography>
         <Box>
           <Button color="secondary" component={Link} to={`/workout/${id}/edit`} startIcon={<Edit />}>
             EDIT
@@ -63,22 +57,15 @@ const WorkoutPage: React.FunctionComponent<void> = () => {
       </Box>
       <Box className={classes.restBox}>
         <Typography variant="subtitle1" gutterBottom>
-          Rest between exercises: <Chip label={`${workout.restPeriodInSeconds} seconds`}/>
+          Rest between exercises: <Chip label={`${workoutRequestData.workout.restPeriodInSeconds} seconds`}/>
         </Typography>
       </Box>
       <Box>
-        <TaskList tasks={workout.tasks} />
+        <TaskList tasks={workoutRequestData.workout.tasks} />
       </Box>
       <Fab variant="extended" className={classes.fab} color="secondary" onClick={onStartClick}>Start</Fab>
     </div>
   );
 };
 
-const mapStateToProps = ({ form }: ApplicationState) => ({
-  form: form.workout.form,
-  id: form.workout.id,
-});
-
-const mapDispatchToProps = {};
-
-export default connect(mapStateToProps, mapDispatchToProps)(WorkoutPage);
+export default WorkoutPage;

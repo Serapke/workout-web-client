@@ -1,67 +1,101 @@
 import * as React from "react";
 import { DragDropContext, Droppable, DropResult } from "react-beautiful-dnd";
-import { Task, Exercise } from "../../store/types";
-import { showModalRequest } from "../../store/modal/thunks";
-import { updateTasksRequest } from "../../store/form/thunks";
+import { Exercise, Task } from "../../store/types";
 import EmptyState from "../empty-state";
-import { ModalType } from "../modal/modal";
-import { ActionType } from "../../store/modal/types";
-import { reorder, removeItem } from "../../utils/immutable";
+import { removeItem, reorder, updateObjectInArray } from "../../utils/immutable";
 import TaskItem from "../task-item";
 import { List } from '@material-ui/core';
-import ExerciseDialog from 'components/exercise/exercise-dialog';
+import ExerciseDetailsDialog from 'components/exercise/exercise-details-dialog';
+import ExerciseUpdateSetDialog from "../workout/exercise-update-set-dialog";
+import ExerciseAddSetDialog from "../workout/exercise-add-set-dialog";
 
-interface OwnProps {
-  tasks: Task[];
-  editable?: boolean;
-  showModal?: typeof showModalRequest;
-  updateTasks?: typeof updateTasksRequest;
-}
+const TaskList = ({ tasks, updateTasks }: OwnProps) => {
+  const [exerciseDetailsDialogState, setExerciseDetailsDialogState] = React.useState<ExerciseDetailsDialogState>(EXERCISE_DETAILS_DIALOG_STATE_EMPTY);
+  const [exerciseAddSetDialogState, setExerciseAddSetDialogState] = React.useState<ExerciseAddSetDialogState>(EXERCISE_ADD_SET_DIALOG_STATE_EMPTY);
+  const [exerciseUpdateSetDialogState, setExerciseUpdateSetDialogState] = React.useState<ExerciseUpdateSetDialogState>(EXERCISE_UPDATE_SET_DIALOG_STATE_EMPTY);
 
-const TaskList = ({ tasks, editable, showModal, updateTasks }: OwnProps) => {
-  const [open, setOpen] = React.useState(false);
-  const [openedExercise, setOpenedExercise] = React.useState<Exercise>(null);
+  const editable = !!updateTasks;
 
   if (!tasks || !tasks.length) {
     return (
       <div>
-        <EmptyState primaryText="No exercises yet." secondaryText="Press + to add it" />
+        <EmptyState primaryText="No exercises yet." secondaryText="Press + to add it"/>
       </div>
     );
   }
 
-  const handleClickOpen = (exercise: Exercise) => {
-    console.log("icon click: ", exercise)
-    setOpenedExercise(exercise);
-    setOpen(true);
-  };
+  // exercise details dialog
+  function handleExerciseIconClick(exercise: Exercise) {
+    setExerciseDetailsDialogState({
+      open: true,
+      exercise
+    });
+  }
 
-  const handleClose = () => {
-    setOpen(false);
-    setOpenedExercise(null);
-  };
+  function handleExerciseDialogClose() {
+    setExerciseDetailsDialogState(EXERCISE_DETAILS_DIALOG_STATE_EMPTY);
+  }
 
-  const onSetClick = (taskIndex: number, setIndex: number) => {
+  // exercise add set dialog
+  const onAddSetClick = (taskIndex: number) => {
     if (!editable) return;
-    showModal({
-      type: ModalType.SetEditingDialog,
-      props: {
-        task: tasks[taskIndex],
-        action: ActionType.UPDATE,
-        index: setIndex,
-      },
+    setExerciseAddSetDialogState({
+      open: true,
+      taskIndex
     });
   };
 
-  const onAddSetClick = (index: number) => {
-    showModal({
-      type: ModalType.SetEditingDialog,
-      props: {
-        task: tasks[index],
-        action: ActionType.ADD,
-      },
+  function handleExerciseAddSetDialogClose() {
+    setExerciseAddSetDialogState(EXERCISE_ADD_SET_DIALOG_STATE_EMPTY);
+  }
+
+  function addRepetition(repetitions: number) {
+    const task = tasks[exerciseAddSetDialogState.taskIndex];
+    updateTasks(updateObjectInArray(tasks, {
+      index: exerciseAddSetDialogState.taskIndex,
+      item: { ...task, sets: [...task.sets, repetitions] }
+    }));
+    handleExerciseAddSetDialogClose();
+  }
+
+  // exercise update set dialog
+  function onSetClick(taskIndex: number, setIndex: number) {
+    if (!editable) return;
+    setExerciseUpdateSetDialogState({
+      open: true,
+      taskIndex,
+      setIndex
     });
-  };
+  }
+
+  function handleExerciseUpdateSetDialogClose() {
+    setExerciseUpdateSetDialogState(EXERCISE_UPDATE_SET_DIALOG_STATE_EMPTY);
+  }
+
+  function updateRepetition(repetitions: number) {
+    const task = tasks[exerciseUpdateSetDialogState.taskIndex];
+    const sets = tasks[exerciseUpdateSetDialogState.taskIndex].sets;
+    updateTasks(updateObjectInArray(tasks, {
+      index: exerciseUpdateSetDialogState.taskIndex,
+      item: {
+        ...task, sets: updateObjectInArray(sets, {
+          index: exerciseUpdateSetDialogState.setIndex,
+          item: repetitions
+        })
+      }
+    }));
+    handleExerciseUpdateSetDialogClose();
+  }
+
+  function deleteRepetition() {
+    const task = tasks[exerciseUpdateSetDialogState.taskIndex];
+    const sets = tasks[exerciseUpdateSetDialogState.taskIndex].sets;
+    updateTasks(updateObjectInArray(tasks, {
+      index: exerciseUpdateSetDialogState.taskIndex,
+      item: { ...task, sets: removeItem(sets, { index: exerciseUpdateSetDialogState.setIndex }) }
+    }));
+    handleExerciseUpdateSetDialogClose();
+  }
 
   const onDragEnd = (result: DropResult) => {
     const { destination, source } = result;
@@ -98,7 +132,7 @@ const TaskList = ({ tasks, editable, showModal, updateTasks }: OwnProps) => {
                   onSetClick={onSetClick}
                   onAddSetClick={onAddSetClick}
                   onDeleteClick={onDeleteClick}
-                  onIconClick={handleClickOpen}
+                  onIconClick={handleExerciseIconClick}
                 />
               ))}
               {provided.placeholder}
@@ -106,9 +140,67 @@ const TaskList = ({ tasks, editable, showModal, updateTasks }: OwnProps) => {
           )}
         </Droppable>
       </DragDropContext>
-      <ExerciseDialog open={open} handleClose={handleClose} exercise={openedExercise} />
+      <ExerciseDetailsDialog
+        open={exerciseDetailsDialogState.open}
+        handleClose={handleExerciseDialogClose}
+        exercise={exerciseDetailsDialogState.exercise}
+      />
+      {editable &&
+          <>
+              <ExerciseAddSetDialog
+                  open={exerciseAddSetDialogState.open}
+                  defaultRepetitions={tasks[exerciseAddSetDialogState.taskIndex].exercise.defaultQuantity}
+                  onClose={handleExerciseAddSetDialogClose}
+                  onAdd={addRepetition}
+              />
+              <ExerciseUpdateSetDialog
+                  open={exerciseUpdateSetDialogState.open}
+                  initialRepetitions={tasks[exerciseUpdateSetDialogState.taskIndex].sets[exerciseUpdateSetDialogState.setIndex]}
+                  onClose={handleExerciseUpdateSetDialogClose}
+                  onUpdate={updateRepetition}
+                  onDelete={deleteRepetition}
+              />
+          </>
+      }
     </React.Fragment>
   );
 };
+
+interface OwnProps {
+  tasks: Task[];
+  updateTasks?: (tasks: Task[]) => void;
+}
+
+const EXERCISE_ADD_SET_DIALOG_STATE_EMPTY: ExerciseAddSetDialogState = {
+  open: false,
+  taskIndex: 0
+}
+
+interface ExerciseAddSetDialogState {
+  open: boolean;
+  taskIndex: number;
+}
+
+const EXERCISE_DETAILS_DIALOG_STATE_EMPTY: ExerciseDetailsDialogState = {
+  open: false,
+  exercise: null
+}
+
+interface ExerciseDetailsDialogState {
+  open: boolean;
+  exercise: Exercise;
+}
+
+const EXERCISE_UPDATE_SET_DIALOG_STATE_EMPTY: ExerciseUpdateSetDialogState = {
+  open: false,
+  taskIndex: 0,
+  setIndex: 0
+}
+
+interface ExerciseUpdateSetDialogState {
+  open: boolean;
+  taskIndex: number;
+  setIndex: number;
+}
 
 export default TaskList;

@@ -4,7 +4,7 @@ import { List, ListItem, Box, makeStyles, Theme, createStyles, Typography } from
 import { FitnessCenter, Info } from '@material-ui/icons';
 import CircleItem from 'components/circle-item';
 import { exerciseMeasurementTypeToLetter } from 'utils/common';
-import ExerciseDialog from 'components/exercise/exercise-dialog';
+import ExerciseDetailsDialog from 'components/exercise/exercise-details-dialog';
 
 interface OwnProps {
   tasks: Task[];
@@ -84,7 +84,7 @@ const TaskList = ({ tasks }: OwnProps) => {
           })
         }
       </List>
-      <ExerciseDialog open={open} handleClose={handleClose} exercise={openedExercise} />
+      <ExerciseDetailsDialog open={open} handleClose={handleClose} exercise={openedExercise} />
     </React.Fragment>
   )
 }

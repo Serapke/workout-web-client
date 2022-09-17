@@ -4,7 +4,7 @@ import Timer from 'components/timer';
 import { TaskStatus } from 'services/types';
 import CircleItem from 'components/circle-item';
 import { exerciseMeasurementTypeToLetter } from 'utils/common';
-import ExerciseDialog from 'components/exercise/exercise-dialog';
+import ExerciseDetailsDialog from 'components/exercise/exercise-details-dialog';
 import { Exercise } from 'store/types';
 import { FitnessCenter, Info } from '@material-ui/icons';
 
@@ -87,7 +87,7 @@ const WorkoutRestState = ({ paused, nextTask, rest }: OwnProps) => {
           </Box>
         </Box>
       </Box>
-      <ExerciseDialog open={open} handleClose={handleClose} exercise={openedExercise} />
+      <ExerciseDetailsDialog open={open} handleClose={handleClose} exercise={openedExercise} />
     </Box>
   )
 }

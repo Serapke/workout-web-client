@@ -29,7 +29,7 @@ const WorkoutResultPage: React.FunctionComponent<AllProps> = () => {
   React.useEffect(() => {
     getWorkoutHistory(resultId)
       .then((history) => updateResult(history))
-      .catch(ex => console.log(ex));
+      .catch(ex => console.error(ex));
   }, [resultId]);
 
   if (!result) return <div/>;

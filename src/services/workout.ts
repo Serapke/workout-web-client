@@ -2,13 +2,17 @@ import { ApiResponse } from "./types";
 import { Workout } from "../store/types";
 import { apiRequest } from "./api-request";
 
-export const getWorkouts: () => Promise<Workout[]> = async () => {
-  return apiRequest(`workout`).then((response: ApiResponse<MyWorkoutsResponse>) => response.data.workouts);
-};
+export function fetchWorkoutsData(): Promise<ApiResponse<MyWorkoutsResponse>> {
+  return apiRequest(`workout`);
+}
 
 export const getWorkout: (id: string) => Promise<Workout> = async (id) => {
   return apiRequest(`workout/${id}`).then((response: ApiResponse<Workout>) => response.data);
 };
+
+export function fetchWorkoutData(id: string): Promise<ApiResponse<Workout>> {
+  return apiRequest(`workout/${id}`);
+}
 
 export const createWorkout: (workout: Workout) => Promise<ApiResponse<WorkoutCreateResponse>> = async (workout) => {
   const request: WorkoutCreateRequest = {
@@ -35,7 +39,7 @@ export const updateWorkout: (workout: Workout) => Promise<ApiResponse<Workout>> 
       exerciseId: task.exercise.id,
       sets: task.sets
     }))
-  }
+  };
 
   return apiRequest(`workout/${workout.id}`, {
     method: "PUT",
@@ -48,7 +52,7 @@ export const deleteWorkout: (id: string) => Promise<void> = async (id) => {
     .then((response: ApiResponse<void>) => response.data);
 }
 
-interface MyWorkoutsResponse {
+export interface MyWorkoutsResponse {
   workouts: Workout[]
 }
 

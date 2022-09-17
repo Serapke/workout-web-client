@@ -82,7 +82,7 @@ const TaskItem = ({
   };
 
   return (
-    <Draggable draggableId={task.id.toString()} index={index}>
+    <Draggable draggableId={task.draggableId} index={index}>
       {(provided) => (
         <ListItem
           ref={provided.innerRef}

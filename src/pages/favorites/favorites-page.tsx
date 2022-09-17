@@ -1,57 +1,30 @@
 import * as React from "react";
-import { connect } from "react-redux";
-import { Routine, Workout } from "../../store/types";
-import { fetchRoutinesRequest, fetchWorkoutsRequest } from "../../store/content/thunks";
 import SliderSection, { ItemType } from "../../components/slider/slider-section";
-import { ApplicationState } from "../../store";
+import { useHandleRoutinesDataRequest } from "../../hooks/use-handle-routines-data-request";
+import { useHandleWorkoutsDataRequest } from "../../hooks/use-handle-workouts-data-request";
 
-interface PropsFromState {
-  routines: Routine[];
-  workouts: Workout[];
-}
+const FavoritesPage = () => {
+  const routinesRequestState = useHandleRoutinesDataRequest();
+  const workoutsRequestState = useHandleWorkoutsDataRequest();
 
-interface PropsFromDispatch {
-  fetchRoutines: typeof fetchRoutinesRequest;
-  fetchWorkouts: typeof fetchWorkoutsRequest;
-}
-
-interface OwnProps { }
-
-type AllProps = PropsFromState & PropsFromDispatch & OwnProps;
-
-const FavoritesPage: React.FunctionComponent<AllProps> = ({ routines, workouts, fetchRoutines, fetchWorkouts }) => {
-  React.useEffect(() => {
-    fetchRoutines();
-    fetchWorkouts();
-  }, [fetchRoutines, fetchWorkouts]);
   return (
     <div>
       <SliderSection
         title="Plans"
         addHref="/plan/create"
         addTitle="+ NEW PLAN"
-        items={routines}
+        items={routinesRequestState.routines}
         type={ItemType.ROUTINE}
       />
       <SliderSection
         title="Workouts"
         addHref="/workout/create"
         addTitle="+ NEW WORKOUT"
-        items={workouts}
+        items={workoutsRequestState.workouts}
         type={ItemType.WORKOUT}
       />
     </div>
   );
 };
 
-const mapStateToProps = ({ content }: ApplicationState) => ({
-  routines: content.routines,
-  workouts: content.workouts,
-});
-
-const mapDispatchToProps = {
-  fetchRoutines: fetchRoutinesRequest,
-  fetchWorkouts: fetchWorkoutsRequest,
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(FavoritesPage);
+export default FavoritesPage;

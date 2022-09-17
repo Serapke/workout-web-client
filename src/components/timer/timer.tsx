@@ -64,7 +64,6 @@ const Timer = ({ title, seconds, paused, increaseBy, onEnd = () => { } }: OwnPro
 
   const addTime = () => {
     setValue(prevState => prevState + increaseBy);
-    console.log(value);
     if (value <= 0) {
       start();
     }

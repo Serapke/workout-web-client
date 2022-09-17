@@ -5,14 +5,15 @@ export interface Routine {
 }
 
 export interface Workout {
-  id: number;
+  id?: number;
   title: string;
   restPeriodInSeconds: number;
   tasks: Task[];
 }
 
 export interface Task {
-  id: number;
+  id?: number;
+  draggableId: string;
   exercise: Exercise;
   sets: number[];
 }

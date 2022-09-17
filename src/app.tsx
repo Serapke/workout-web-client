@@ -1,7 +1,6 @@
 import React from "react";
 import { Route, Routes } from "react-router-dom";
 import NavigationBar from "./components/navigation-bar";
-import Modal from "./components/modal/modal";
 import Frontdoor from "./pages/frontdoor";
 import LoginPage from "./pages/authentication/login-page";
 import { Box } from "@material-ui/core";
@@ -11,7 +10,6 @@ import WorkoutResultPage from "./pages/workout/workout-result-page";
 import FavoritesPage from "./pages/favorites/favorites-page";
 import WorkoutPage from "./pages/workout/workout-page/workout-page";
 import WorkoutEditPage from "./pages/workout/workout-edit-page/workout-edit-page";
-import ExerciseSelectPage from "./pages/exercise/exercise-select-page/exercise-select-page";
 import ExercisesPage from "./pages/exercise/exercises-page";
 import ExercisePage from "./pages/exercise/exercise-page";
 import ExerciseEditPage from "./pages/exercise/exercise-edit-page";
@@ -37,7 +35,6 @@ const App = () => {
               <Route path="/workout/:id/edit" element={<WorkoutEditPage/>}/>
               <Route path="/workout/:id" element={<WorkoutPage/>}/>
               <Route path="/exercises" element={<ExercisesPage/>}/>
-              <Route path="/exercise/select" element={<ExerciseSelectPage/>}/>
               <Route path="/exercise/create" element={<ExerciseCreatePage/>}/>
               <Route path="/exercise/:id/edit" element={<ExerciseEditPage/>}/>
               <Route path="/exercise/:id" element={<ExercisePage/>}/>
@@ -45,7 +42,6 @@ const App = () => {
           </Routes>
         </Box>
       </AuthProvider>
-      <Modal/>
     </Box>
   );
 }

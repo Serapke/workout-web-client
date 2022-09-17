@@ -6,7 +6,7 @@ import { FitnessCenter, Info } from '@material-ui/icons';
 import CircleItem from 'components/circle-item';
 import Timer from 'components/timer';
 import { MeasurementType, Exercise } from 'store/types';
-import ExerciseDialog from 'components/exercise/exercise-dialog';
+import ExerciseDetailsDialog from 'components/exercise/exercise-details-dialog';
 
 interface OwnProps {
   task: TaskStatus;
@@ -72,7 +72,7 @@ const ExerciseState = ({ task, setIndex, paused, togglePause }: OwnProps) => {
           )}
         </Box>
       </Box>
-      <ExerciseDialog open={open} handleClose={handleClose} exercise={openedExercise} />
+      <ExerciseDetailsDialog open={open} handleClose={handleClose} exercise={openedExercise} />
     </Box >
   )
 }
