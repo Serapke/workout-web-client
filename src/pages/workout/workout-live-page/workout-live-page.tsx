@@ -1,6 +1,6 @@
 import * as React from "react";
 
-import { WorkoutStatus } from 'services/types';
+import { LiveWorkout } from 'services/types';
 import ExerciseState from './workout-exercise-state';
 import WorkoutRestState from './workout-rest-state';
 import { Box } from '@material-ui/core';
@@ -17,14 +17,16 @@ import ExitLiveWorkoutDialog from './components/exit-live-workout-dialog';
 import { useParams } from "react-router";
 import { usePrompt } from "../../../hooks/usePrompt";
 import { useNavigate } from "react-router-dom";
+import WorkoutCycleRestState from "./workout-cycle-rest-state";
 
 enum WorkoutPageState {
   EXERCISE,
-  REST
+  REST,
+  CYCLE_REST
 }
 
 const WorkoutLivePage: React.FunctionComponent = () => {
-  const [status, updateStatus] = React.useState<WorkoutStatus>();
+  const [status, updateStatus] = React.useState<LiveWorkout>();
   const [setIndex, updateSetIndex] = React.useState<number>();
   const [setsDone, updateSetsDone] = React.useState<number[]>([]);
   const [pageState, updatePageState] = React.useState<WorkoutPageState>(WorkoutPageState.EXERCISE);
@@ -50,21 +52,6 @@ const WorkoutLivePage: React.FunctionComponent = () => {
     }
   });
 
-  // React.useEffect(() => {
-  //   //   const unblock = history.block((tx, action) => {
-  //   //     if (action === "POP") {
-  //   //       setNavigationPathname(tx.pathname);
-  //   //       setPaused(true);
-  //   //       return false;
-  //   //     }
-  //   //   });
-  //   //
-  //   //   return () => {
-  //   //     unblock();
-  //   //   };
-  //   // }, [history]
-  // );
-
   if (!status) return <div/>;
 
   const togglePause = () => {
@@ -80,17 +67,19 @@ const WorkoutLivePage: React.FunctionComponent = () => {
   }
 
   const onExerciseStateNextClick = () => {
-    let setsCount = status.currentTask.setsGoal.length;
-    setsDone[setIndex] = status.currentTask.setsGoal[setIndex];
+    let setsCount = status.currentTask.sets.length;
+    setsDone[setIndex] = status.currentTask.sets[setIndex];
     updateSetsDone(setsDone);
     if (setIndex + 1 < setsCount) {
       updateSetIndex(setIndex + 1);
+    } else if (status.nextTask && status.nextTaskOnNewCycle) {
+      updatePageState(WorkoutPageState.CYCLE_REST);
+      console.log("NEXT CYCLE");
     } else if (status.nextTask) {
       updatePageState(WorkoutPageState.REST);
     } else {
-      updateWorkoutDuration(status.id, duration);
-      finishWorkout(status.id, setsDone).then(() => {
-        navigate(`/workout/${id}/result/${status.id}`);
+      finishWorkout(status.id, setsDone, duration).then(() => {
+        navigate(`/workout/${id}/result/${status.workoutHistoryId}`);
       })
     }
   }
@@ -129,11 +118,13 @@ const WorkoutLivePage: React.FunctionComponent = () => {
   if (pageState === WorkoutPageState.EXERCISE) {
     stateComponent =
       <ExerciseState task={status.currentTask} setIndex={setIndex} paused={paused} togglePause={togglePause}/>
+  } else if (pageState == WorkoutPageState.CYCLE_REST) {
+    stateComponent = <WorkoutCycleRestState rest={60} nextTask={status.nextTask} paused={paused} cyclesDone={status.currentCycle} cycles={status.cycles}/>
   } else {
     stateComponent = <WorkoutRestState rest={status.rest} nextTask={status.nextTask} paused={paused}/>
   }
 
-  const hasMoreSets = status.nextTask || setIndex !== status.currentTask.setsGoal.length - 1;
+  const hasMoreSets = status.nextTask || setIndex !== status.currentTask.sets.length - 1;
 
   return (
     <Box>

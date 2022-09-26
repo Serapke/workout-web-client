@@ -1,17 +1,16 @@
 import * as React from "react";
-import { Box, Typography, makeStyles, Theme, createStyles } from '@material-ui/core';
+import { Box, createStyles, makeStyles, Theme, Typography } from '@material-ui/core';
 import Timer from 'components/timer';
-import { TaskStatus } from 'services/types';
 import CircleItem from 'components/circle-item';
 import { exerciseMeasurementTypeToLetter } from 'utils/common';
 import ExerciseDetailsDialog from 'components/exercise/exercise-details-dialog';
-import { Exercise } from 'store/types';
+import { Exercise, Task } from 'store/types';
 import { FitnessCenter, Info } from '@material-ui/icons';
 
 
 interface OwnProps {
   rest: number;
-  nextTask: TaskStatus;
+  nextTask: Task;
   paused: boolean;
 }
 
@@ -82,7 +81,7 @@ const WorkoutRestState = ({ paused, nextTask, rest }: OwnProps) => {
           <Box display="flex" flexDirection="column" p={2}>
             <Typography variant="h4">{nextTask.exercise.title}</Typography>
             <Box display="flex" mt={1} className={classes.setBox}>
-              {nextTask.setsGoal.map((setGoal, sIndex) => <CircleItem key={`set-goal-${sIndex}`} size="medium" color="secondary">{setGoal}{exerciseMeasurementTypeToLetter(nextTask.exercise.measurementType)}</CircleItem>)}
+              {nextTask.sets.map((setGoal, sIndex) => <CircleItem key={`set-goal-${sIndex}`} size="medium" color="secondary">{setGoal}{exerciseMeasurementTypeToLetter(nextTask.exercise.measurementType)}</CircleItem>)}
             </Box>
           </Box>
         </Box>

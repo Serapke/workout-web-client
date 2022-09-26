@@ -19,7 +19,6 @@ export default function WorkoutEditForm({ workout, onSubmit }: OwnProps) {
   const classes = useStyles();
   const fabClass = fabKeyboardStyles();
 
-
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     onSubmit(workoutUpdate);
@@ -68,7 +67,6 @@ export default function WorkoutEditForm({ workout, onSubmit }: OwnProps) {
               <TextField
                   className={classes.textField}
                   id="restPeriodInSeconds"
-                  name="restPeriodInSeconds"
                   label="Rest between sets"
                   color="secondary"
                   type="number"
@@ -80,6 +78,15 @@ export default function WorkoutEditForm({ workout, onSubmit }: OwnProps) {
                   }}
                   onChange={onTextFieldChange}
                   fullWidth
+              />
+              <TextField
+                className={classes.textField}
+                id="cycles"
+                label="Cycles"
+                color="secondary"
+                value={workoutUpdate.cycles}
+                onChange={onTextFieldChange}
+                type="number"
               />
               <Button
                   className={classes.button}

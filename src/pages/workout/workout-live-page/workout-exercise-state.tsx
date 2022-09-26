@@ -1,15 +1,14 @@
 import * as React from "react";
-import { makeStyles, createStyles, Typography, Box } from '@material-ui/core';
-import { TaskStatus } from 'services/types';
-import { exerciseTypeToWord as exerciseMeasurementTypeToWord, exerciseMeasurementTypeToLetter } from 'utils/common';
+import { Box, createStyles, makeStyles, Typography } from '@material-ui/core';
+import { exerciseMeasurementTypeToLetter, exerciseTypeToWord as exerciseMeasurementTypeToWord } from 'utils/common';
 import { FitnessCenter, Info } from '@material-ui/icons';
 import CircleItem from 'components/circle-item';
 import Timer from 'components/timer';
-import { MeasurementType, Exercise } from 'store/types';
+import { Exercise, MeasurementType, Task } from 'store/types';
 import ExerciseDetailsDialog from 'components/exercise/exercise-details-dialog';
 
 interface OwnProps {
-  task: TaskStatus;
+  task: Task;
   setIndex: number;
   paused: boolean;
   togglePause: () => void;
@@ -55,13 +54,13 @@ const ExerciseState = ({ task, setIndex, paused, togglePause }: OwnProps) => {
           </Box>
           <FitnessCenter style={{ fontSize: 100 }} />
         </Box>
-        {task.exercise.measurementType === MeasurementType.TIMED && <Box mt={1}><Timer key={setIndex} seconds={task.setsGoal[setIndex]} paused={paused} /></Box>}
+        {task.exercise.measurementType === MeasurementType.TIMED && <Box mt={1}><Timer key={setIndex} seconds={task.sets[setIndex]} paused={paused} /></Box>}
       </Box>
       <Box display="flex" flexDirection="column" alignItems="center" mt={3}>
-        <Typography variant="h5" gutterBottom>{task.setsGoal[setIndex]} {exerciseMeasurementTypeToWord(task.exercise.measurementType, task.setsGoal[setIndex])}</Typography>
+        <Typography variant="h5" gutterBottom>{task.sets[setIndex]} {exerciseMeasurementTypeToWord(task.exercise.measurementType, task.sets[setIndex])}</Typography>
         <Typography onClick={handleClickOpen(task.exercise)} variant="h4" className={classes.exercise}>{task.exercise.title}</Typography>
         <Box display="flex" mt={1} className={classes.setBox}>
-          {task.setsGoal.map((setGoal, sIndex) =>
+          {task.sets.map((setGoal, sIndex) =>
             <CircleItem
               key={`set-goal-${sIndex}`}
               size="medium"

@@ -1,14 +1,73 @@
 import React from 'react';
-import { makeStyles, Theme, createStyles, List, ListItem, ListItemAvatar, Avatar, ListItemText, Box, Divider } from '@material-ui/core';
+import {
+  Avatar,
+  Box,
+  createStyles,
+  Divider,
+  List,
+  ListItem,
+  ListItemAvatar,
+  ListItemText,
+  ListSubheader,
+  makeStyles
+} from '@material-ui/core';
 import { FitnessCenter } from '@material-ui/icons';
 import CircleItem from 'components/circle-item';
 import { TaskHistory } from 'services/types';
 
-interface OwnProps {
-  tasks: TaskHistory[];
+const TaskHistoryList = ({ tasks }: OwnProps) => {
+  const classes = useStyles();
+
+  if (!tasks) {
+    return;
+  }
+
+  return (
+    <List className={classes.list}>
+      {
+        tasks.map((tasksPerCycle, cycle) => (
+          <List className={classes.list} key={cycle} subheader={ tasks.length > 1 && (
+            <CycleHeader cycle={cycle+1} key={cycle} />
+          )}>
+            {
+              tasksPerCycle.map((task, tIndex) => (
+                  <React.Fragment key={tIndex}>
+                    <ListItem>
+                      <ListItemAvatar>
+                        <Avatar>
+                          <FitnessCenter/>
+                        </Avatar>
+                      </ListItemAvatar>
+                      <ListItemText disableTypography primary={task.exercise.title} secondary={
+                        <Box display="flex" mt={0.5} className={classes.setBox}>
+                          {task.setsDone && task.setsDone.map((set, sIndex) => (
+                            <CircleItem key={sIndex} color="secondary">
+                              {set}{task.exercise.measurementType === "TIMED" ? "s" : "x"}
+                            </CircleItem>
+                          ))}
+                        </Box>
+                      }/>
+                    </ListItem>
+                    <Divider component="li"/>
+                  </React.Fragment>
+              ))
+            }
+          </List>
+        ))
+      }
+    </List>
+  )
 }
 
-const useStyles = makeStyles((theme: Theme) =>
+const CycleHeader = ({ cycle }: { cycle: number}) => {
+  return (
+    <ListSubheader disableSticky>
+      Cycle {cycle}
+    </ListSubheader>
+  )
+}
+
+const useStyles = makeStyles(() =>
   createStyles({
     list: {
       width: '100%',
@@ -21,38 +80,8 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 )
 
-const TaskHistoryList = ({ tasks }: OwnProps) => {
-  const classes = useStyles();
-
-  return (
-    <List className={classes.list}>
-      {
-        tasks && tasks.map((task, tIndex) => {
-          return (
-            <React.Fragment key={tIndex}>
-              <ListItem>
-                <ListItemAvatar>
-                  <Avatar>
-                    <FitnessCenter />
-                  </Avatar>
-                </ListItemAvatar>
-                <ListItemText disableTypography primary={task.exercise.title} secondary={
-                  <Box display="flex" mt={0.5} className={classes.setBox}>
-                    {task.setsDone && task.setsDone.map((set, sIndex) => (
-                      <CircleItem key={sIndex} color="secondary">
-                        {set}{task.exercise.measurementType === "TIMED" ? "s" : "x"}
-                      </CircleItem>
-                    ))}
-                  </Box>
-                } />
-              </ListItem>
-              <Divider component="li" />
-            </React.Fragment>
-          )
-        })
-      }
-    </List>
-  )
+interface OwnProps {
+  tasks: TaskHistory[][];
 }
 
 export default TaskHistoryList;

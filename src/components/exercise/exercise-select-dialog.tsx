@@ -20,8 +20,10 @@ const ExerciseSelectDialog = ({ open, handleClose, onSelect }: OwnProps) => {
   const classes = useStyles();
 
   React.useEffect(() => {
-    getExercises().then((exercises) => setExercises(exercises));
-  }, []);
+    if (open) {
+      getExercises().then((exercises) => setExercises(exercises));
+    }
+  }, [open]);
 
   const button = {
     text: "Select",
@@ -42,7 +44,7 @@ const ExerciseSelectDialog = ({ open, handleClose, onSelect }: OwnProps) => {
       setSelectedIds((prevState) => [...prevState, id]);
     }
   };
-
+  
   return (
     <Dialog open={open} title="Select exercises" handleClose={handleClose} fullScreen button={button}>
       {/* TODO: FE-0004 - implement*/}

@@ -46,7 +46,7 @@ const WorkoutResultPage: React.FunctionComponent<AllProps> = () => {
     <Box display="flex" flexDirection="column" alignItems="center">
       <Typography variant="h4">Results</Typography>
       <WorkoutResultStatistics duration={result.duration}/>
-      <EmotionSelector emotion={result.emotion} onEmotionClick={onEmotionClick}/>
+      <EmotionSelector emotion={result.emotion} onEmotionClick={onEmotionClick} editable={result.editable}/>
       <TaskHistoryList tasks={result.tasks}/>
     </Box>
   )

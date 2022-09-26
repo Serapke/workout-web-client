@@ -1,4 +1,4 @@
-import { Exercise } from 'store/types';
+import { Exercise, Task } from 'store/types';
 
 export interface Error {
   code: string,
@@ -19,20 +19,16 @@ export interface User {
   lastName: string
 }
 
-export interface WorkoutStatus {
+export interface LiveWorkout {
   id: number;
-  currentTask: TaskStatus;
-  nextTask: TaskStatus;
+  workoutHistoryId: number;
+  currentTask: Task;
+  nextTask: Task;
+  nextTaskOnNewCycle: boolean;
   rest: number;
   duration: number;
-}
-
-export interface TaskStatus {
-  id: number;
-  exercise: Exercise;
-  order: number;
-  setsGoal: number[];
-  setsDone: number[];
+  currentCycle: number;
+  cycles: number;
 }
 
 export interface WorkoutHistory {
@@ -42,14 +38,14 @@ export interface WorkoutHistory {
   duration: number;
   endTime: string;
   emotion: Emotion;
-  tasks: TaskStatus[];
+  tasks: TaskHistory[][];
   rest: number;
+  editable: boolean;
 }
 
 export interface TaskHistory {
   id: number;
   exercise: Exercise;
-  order: number;
   setsGoal: number[];
   setsDone: number[];
 }

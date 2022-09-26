@@ -4,6 +4,8 @@ import { useNavigate } from "react-router-dom";
 import WorkoutForm from "../workout-edit-page/components/workout-edit-form";
 import { Workout } from "../../../store/types";
 
+const EMPTY_WORKOUT = {title: undefined, restPeriodInSeconds: 0, cycles: 0, tasks: []};
+
 const WorkoutCreatePage = () => {
   const navigate = useNavigate();
 
@@ -20,7 +22,7 @@ const WorkoutCreatePage = () => {
 
   return (
     <div>
-      <WorkoutForm workout={{title: undefined, restPeriodInSeconds: undefined, tasks: []}} onSubmit={handleSubmit}/>
+      <WorkoutForm workout={EMPTY_WORKOUT} onSubmit={handleSubmit}/>
     </div>
   );
 };

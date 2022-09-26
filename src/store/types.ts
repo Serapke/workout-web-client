@@ -8,6 +8,7 @@ export interface Workout {
   id?: number;
   title: string;
   restPeriodInSeconds: number;
+  cycles: number;
   tasks: Task[];
 }
 

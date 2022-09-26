@@ -18,6 +18,7 @@ export const createWorkout: (workout: Workout) => Promise<ApiResponse<WorkoutCre
   const request: WorkoutCreateRequest = {
     title: workout.title,
     restPeriodInSeconds: workout.restPeriodInSeconds,
+    cycles: workout.cycles,
     tasks: workout.tasks.map(task => ({
       id: task.id,
       exerciseId: task.exercise.id,
@@ -34,6 +35,7 @@ export const updateWorkout: (workout: Workout) => Promise<ApiResponse<Workout>> 
   const request: WorkoutUpdateRequest = {
     title: workout.title,
     restPeriodInSeconds: workout.restPeriodInSeconds,
+    cycles: workout.cycles,
     tasks: workout.tasks.map(task => ({
       id: task.id,
       exerciseId: task.exercise.id,
@@ -63,12 +65,14 @@ interface WorkoutCreateResponse {
 interface WorkoutCreateRequest {
   title: string,
   restPeriodInSeconds: number,
+  cycles: number,
   tasks: WorkoutUpdateTask[]
 }
 
 interface WorkoutUpdateRequest {
   title: string,
   restPeriodInSeconds: number,
+  cycles: number,
   tasks: WorkoutUpdateTask[]
 }
 

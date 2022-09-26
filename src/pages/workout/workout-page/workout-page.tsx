@@ -13,7 +13,11 @@ const useStyles = makeStyles((theme: Theme) =>
       marginBottom: theme.spacing(2),
     },
     restBox: {
+      display: 'flex',
       marginBottom: theme.spacing(2),
+      '& > *': {
+        margin: theme.spacing(0.5),
+      },
     },
     fab: {
       position: 'fixed',
@@ -42,26 +46,29 @@ const WorkoutPage = () => {
       .then(() => navigate('/favorites'));
   }
 
+  function showCycles() {
+    return workoutRequestData.workout.cycles > 1;
+  }
+
   return (
     <div>
       <Box className={classes.header} display="flex" alignItems="center" justifyContent="space-between">
         <Typography variant="h4">{workoutRequestData.workout.title}</Typography>
         <Box>
-          <Button color="secondary" component={Link} to={`/workout/${id}/edit`} startIcon={<Edit />}>
+          <Button color="secondary" component={Link} to={`/workout/${id}/edit`} startIcon={<Edit/>}>
             EDIT
           </Button>
-          <Button color="secondary" onClick={onDeleteClick} startIcon={<Delete />}>
+          <Button color="secondary" onClick={onDeleteClick} startIcon={<Delete/>}>
             DELETE
           </Button>
         </Box>
       </Box>
       <Box className={classes.restBox}>
-        <Typography variant="subtitle1" gutterBottom>
-          Rest between exercises: <Chip label={`${workoutRequestData.workout.restPeriodInSeconds} seconds`}/>
-        </Typography>
+        <Chip label={`Rest ${workoutRequestData.workout.restPeriodInSeconds}s`}/>
+        {showCycles() && <Chip label={`${workoutRequestData.workout.cycles} cycles`}/>}
       </Box>
       <Box>
-        <TaskList tasks={workoutRequestData.workout.tasks} />
+        <TaskList tasks={workoutRequestData.workout.tasks}/>
       </Box>
       <Fab variant="extended" className={classes.fab} color="secondary" onClick={onStartClick}>Start</Fab>
     </div>

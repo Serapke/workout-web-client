@@ -1,13 +1,13 @@
 import { ApiResponse } from "./types";
-import { Exercise, BodyPart } from "../store/types";
+import { BodyPart, Exercise } from "../store/types";
 import { apiRequest } from "./api-request";
 
-export const getExercises: () => Promise<Exercise[]> = async () => {
-  return apiRequest(`exercise`);
-};
+export function getExercises(): Promise<Exercise[]> {
+  return apiRequest(`exercise`).then((response: ApiResponse<ExercisesResponse>) => response.data.exercises);
+}
 
-export const getExercise: (id: string) => Promise<Exercise> = async (id) => {
-  return apiRequest(`exercise/${id}`);
+export function getExercise(id: string): Promise<Exercise> {
+  return apiRequest(`exercise/${id}`).then((response: ApiResponse<Exercise>) => response.data);
 }
 
 export const getBodyParts: () => Promise<BodyPart[]> = async () => {
@@ -32,4 +32,8 @@ export const deleteExercise: (id: string) => Promise<any> = async (id) => {
   return apiRequest(`exercise/${id}`, {
     method: 'DELETE'
   });
+}
+
+interface ExercisesResponse {
+  exercises: Exercise[]
 }
