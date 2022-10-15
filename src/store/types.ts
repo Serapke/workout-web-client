@@ -22,10 +22,7 @@ export interface Task {
 export interface Exercise {
   id: number;
   title: string;
-  description: {
-    startingPosition: string;
-    steps: string[];
-  };
+  description: ExerciseDescription;
   type: Type;
   defaultQuantity: number;
   measurementType: MeasurementType;
@@ -33,6 +30,11 @@ export interface Exercise {
   equipment: Equipment[];
   difficulty: Difficulty;
   bothSided: boolean;
+}
+
+export interface ExerciseDescription {
+  startingPosition: string;
+  steps: string[];
 }
 
 export enum MeasurementType {
@@ -57,6 +59,7 @@ export enum BodyPart {
   SHOULDERS = "SHOULDERS",
   TRICEPS = "TRICEPS",
   UPPER_LEGS = "UPPER_LEGS",
+  UPPER_TRAPEZIUS = "UPPER_TRAPEZIUS",
   LOWER_LEGS = "LOWER_LEGS",
 }
 

@@ -40,7 +40,6 @@ const EmotionSelector = ({ emotion, onEmotionClick, editable }: OwnProps) => {
   const title = editable ? "How are you feeling?" : "It made you feel...";
 
   function isButtonDisabled(buttonEmotion: string) {
-    console.log(!editable, buttonEmotion, emotionState);
     return !editable || buttonEmotion === emotionState;
   }
 

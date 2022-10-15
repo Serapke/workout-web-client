@@ -1,5 +1,5 @@
 import { ApiResponse } from "./types";
-import { BodyPart, Exercise } from "../store/types";
+import { BodyPart, Difficulty, Equipment, Exercise, ExerciseDescription, MeasurementType, Type } from "../store/types";
 import { apiRequest } from "./api-request";
 
 export function getExercises(): Promise<Exercise[]> {
@@ -15,16 +15,28 @@ export const getBodyParts: () => Promise<BodyPart[]> = async () => {
 };
 
 export const createExercise: (exercise: Exercise) => Promise<ApiResponse<any>> = async (exercise) => {
-  return apiRequest(`exercise/create`, {
+  return apiRequest(`exercise`, {
     method: "POST",
     body: JSON.stringify(exercise),
   });
 };
 
 export const updateExercise: (exercise: Exercise) => Promise<ApiResponse<any>> = async (exercise) => {
-  return apiRequest(`exercise/update`, {
+  const request: ExerciseUpdateRequest = {
+    title: exercise.title,
+    description: exercise.description,
+    defaultQuantity: exercise.defaultQuantity,
+    bothSided: exercise.bothSided,
+    type: exercise.type,
+    measurementType: exercise.measurementType,
+    difficulty: exercise.difficulty,
+    bodyParts: exercise.bodyParts,
+    equipment: exercise.equipment,
+  };
+
+  return apiRequest(`exercise/${exercise.id}`, {
     method: "PUT",
-    body: JSON.stringify(exercise),
+    body: JSON.stringify(request),
   });
 }
 
@@ -32,6 +44,18 @@ export const deleteExercise: (id: string) => Promise<any> = async (id) => {
   return apiRequest(`exercise/${id}`, {
     method: 'DELETE'
   });
+}
+
+interface ExerciseUpdateRequest {
+  title: string,
+  description: ExerciseDescription;
+  defaultQuantity: number;
+  bothSided: boolean;
+  type: Type;
+  measurementType: MeasurementType;
+  difficulty: Difficulty;
+  bodyParts: BodyPart[];
+  equipment: Equipment[];
 }
 
 interface ExercisesResponse {
