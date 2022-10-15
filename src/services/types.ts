@@ -21,6 +21,7 @@ export interface User {
 
 export interface LiveWorkout {
   id: number;
+  workoutId: number;
   workoutHistoryId: number;
   currentTask: Task;
   nextTask: Task;

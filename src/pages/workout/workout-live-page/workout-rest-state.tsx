@@ -1,18 +1,13 @@
 import * as React from "react";
+import { useContext } from "react";
 import { Box, createStyles, makeStyles, Theme, Typography } from '@material-ui/core';
 import Timer from 'components/timer';
 import CircleItem from 'components/circle-item';
 import { exerciseMeasurementTypeToLetter } from 'utils/common';
 import ExerciseDetailsDialog from 'components/exercise/exercise-details-dialog';
-import { Exercise, Task } from 'store/types';
+import { Exercise } from 'store/types';
 import { FitnessCenter, Info } from '@material-ui/icons';
-
-
-interface OwnProps {
-  rest: number;
-  nextTask: Task;
-  paused: boolean;
-}
+import { LiveWorkoutContext } from "../../../context/live-workout-context";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -48,11 +43,16 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 )
 
-const WorkoutRestState = ({ paused, nextTask, rest }: OwnProps) => {
+const WorkoutRestState = () => {
   const classes = useStyles();
 
   const [open, setOpen] = React.useState(false);
   const [openedExercise, setOpenedExercise] = React.useState<Exercise>(null);
+  
+  const {
+    liveWorkout: { nextTask, rest },
+    paused,
+  } = useContext(LiveWorkoutContext);
 
   const handleClickOpen = (exercise: Exercise) => () => {
     setOpenedExercise(exercise);

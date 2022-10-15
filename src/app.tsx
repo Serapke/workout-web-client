@@ -16,6 +16,7 @@ import ExerciseEditPage from "./pages/exercise/exercise-edit-page";
 import ExerciseCreatePage from "./pages/exercise/exercise-create-page";
 import WorkoutLivePage from "./pages/workout/workout-live-page";
 import WorkoutCreatePage from "./pages/workout/workout-create-page/workout-create-page";
+import LiveWorkoutContextProvider from "./context/live-workout-context";
 
 const App = () => {
   return (
@@ -31,7 +32,13 @@ const App = () => {
               <Route path="/history" element={<HistoryPage/>}/>
               <Route path="/workout/create" element={<WorkoutCreatePage/>}/>
               <Route path="/workout/:id/result/:resultId" element={<WorkoutResultPage/>}/>
-              <Route path="/workout/:id/live" element={<WorkoutLivePage/>}/>
+              <Route path="/workout/:id/live" element={
+                <React.Fragment>
+                  <LiveWorkoutContextProvider>
+                    <WorkoutLivePage/>
+                  </LiveWorkoutContextProvider>
+                </React.Fragment>
+              }/>
               <Route path="/workout/:id/edit" element={<WorkoutEditPage/>}/>
               <Route path="/workout/:id" element={<WorkoutPage/>}/>
               <Route path="/exercises" element={<ExercisesPage/>}/>

@@ -6,7 +6,11 @@ export const getActiveWorkoutStatus: (id: string) => Promise<LiveWorkout> = asyn
     .then((response: ApiResponse<LiveWorkout>) => response.data);
 }
 
-export const continueWorkout: (id: number, sets: number[]) => Promise<LiveWorkout> = async (id, sets) => {
+export function fetchActiveWorkoutOrStartNew(workoutId: string): Promise<ApiResponse<LiveWorkout>> {
+  return apiRequest(`live-workout/start?workoutId=${workoutId}`, { method: "POST" })
+}
+
+export function continueWorkout(id: number, sets: number[]): Promise<LiveWorkout> {
   const request: LiveWorkoutContinueRequest = {
     sets
   }
@@ -27,7 +31,7 @@ export function finishWorkout(id: number, sets: number[], durationInSeconds: num
   }).then((response: ApiResponse<void>) => response.data);
 }
 
-export const discardWorkout: (id: number) => Promise<void> = async (id) => {
+export const discardLiveWorkout: (id: number) => Promise<void> = async (id) => {
   return apiRequest(`live-workout/${id}`, {
     method: "DELETE",
   }).then((response: ApiResponse<void>) => response.data);
