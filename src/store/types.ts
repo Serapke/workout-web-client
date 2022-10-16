@@ -23,13 +23,17 @@ export interface Exercise {
   id: number;
   title: string;
   description: ExerciseDescription;
-  type: Type;
   defaultQuantity: number;
+  bothSided: boolean;
+
+  type: Type;
   measurementType: MeasurementType;
+  difficulty: Difficulty;
+
+  imageUrl: string;
+
   bodyParts: BodyPart[];
   equipment: Equipment[];
-  difficulty: Difficulty;
-  bothSided: boolean;
 }
 
 export interface ExerciseDescription {

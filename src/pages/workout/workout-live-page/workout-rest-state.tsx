@@ -48,7 +48,7 @@ const WorkoutRestState = () => {
 
   const [open, setOpen] = React.useState(false);
   const [openedExercise, setOpenedExercise] = React.useState<Exercise>(null);
-  
+
   const {
     liveWorkout: { nextTask, rest },
     paused,
@@ -76,7 +76,11 @@ const WorkoutRestState = () => {
             <Box position="absolute" right="6px" top="8px">
               <Info className={classes.icon} />
             </Box>
-            <FitnessCenter className={classes.icon} style={{ fontSize: 50 }} />
+            {
+              nextTask.exercise.imageUrl
+                ? <img src={nextTask.exercise.imageUrl} alt={nextTask.exercise.title} width={100}/>
+                : <FitnessCenter className={classes.icon} style={{ fontSize: 50 }}/>
+            }
           </Box>
           <Box display="flex" flexDirection="column" p={2}>
             <Typography variant="h4">{nextTask.exercise.title}</Typography>

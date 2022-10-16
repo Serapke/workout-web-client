@@ -15,9 +15,21 @@ export const getBodyParts: () => Promise<BodyPart[]> = async () => {
 };
 
 export const createExercise: (exercise: Exercise) => Promise<ApiResponse<any>> = async (exercise) => {
+  const request: ExerciseCreateRequest = {
+    title: exercise.title,
+    description: exercise.description,
+    defaultQuantity: exercise.defaultQuantity,
+    bothSided: exercise.bothSided,
+    type: exercise.type,
+    measurementType: exercise.measurementType,
+    difficulty: exercise.difficulty,
+    bodyParts: exercise.bodyParts,
+    equipment: exercise.equipment,
+  };
+
   return apiRequest(`exercise`, {
     method: "POST",
-    body: JSON.stringify(exercise),
+    body: JSON.stringify(request),
   });
 };
 
@@ -44,6 +56,18 @@ export const deleteExercise: (id: string) => Promise<any> = async (id) => {
   return apiRequest(`exercise/${id}`, {
     method: 'DELETE'
   });
+}
+
+interface ExerciseCreateRequest {
+  title: string,
+  description: ExerciseDescription;
+  defaultQuantity: number;
+  bothSided: boolean;
+  type: Type;
+  measurementType: MeasurementType;
+  difficulty: Difficulty;
+  bodyParts: BodyPart[];
+  equipment: Equipment[];
 }
 
 interface ExerciseUpdateRequest {

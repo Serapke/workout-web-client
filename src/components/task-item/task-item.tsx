@@ -1,16 +1,9 @@
 import * as React from "react";
-import {
-  Typography,
-  Box,
-  makeStyles,
-  Theme,
-  createStyles,
-  ListItem,
-} from "@material-ui/core";
+import { Box, createStyles, ListItem, makeStyles, Theme, Typography, } from "@material-ui/core";
 import { FitnessCenter, Info } from "@material-ui/icons";
 import { Draggable } from "react-beautiful-dnd";
 import TaskItemMenu from "./task-item-menu";
-import { Task, Exercise } from "../../store/types";
+import { Exercise, Task } from "../../store/types";
 import CircleItem from "../circle-item";
 import { exerciseMeasurementTypeToLetter } from 'utils/common';
 
@@ -95,7 +88,11 @@ const TaskItem = ({
               <Box position="absolute" right="6px" top="8px">
                 <Info className={classes.icon} style={{ fontSize: 14 }} />
               </Box>
-              <FitnessCenter className={classes.icon} style={{ fontSize: 50 }} />
+              {
+                task.exercise.imageUrl
+                  ? <img src={task.exercise.imageUrl} alt={task.exercise.title} width={70}/>
+                  : <FitnessCenter className={classes.icon} style={{ fontSize: 50 }}/>
+              }
             </Box>
             <Box display="flex" flexDirection="column" px={2} py={1}>
               <Typography variant="h6">{task.exercise.title}</Typography>

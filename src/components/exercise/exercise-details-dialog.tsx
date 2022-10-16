@@ -27,6 +27,11 @@ const ExerciseDetailsDialog = ({ open, exercise, handleClose }: OwnProps) => {
   return (
     <Dialog open={open} title="Exercise details" handleClose={handleClose} fullScreen>
       {exercise && <Box p={3}>
+        {exercise.imageUrl &&
+            <Box>
+                <img src={exercise.imageUrl} alt={exercise.title} width={200}/>
+            </Box>
+        }
         <Box mb={2}>
           <Typography variant="h4">{exercise.title}</Typography>
         </Box>

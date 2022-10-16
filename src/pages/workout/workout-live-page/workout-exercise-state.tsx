@@ -14,6 +14,9 @@ const useStyles = makeStyles(() =>
     exercise: {
       color: "#666",
     },
+    image: {
+      display: "block",
+    },
     setBox: {
       "&>*": {
         margin: "0 4px",
@@ -54,11 +57,15 @@ const ExerciseState = () => {
   return (
     <Box display="flex" flexDirection="column" alignItems="center" mt={3}>
       <Box display="flex" flexDirection="column" alignItems="center">
-        <Box onClick={() => handleClickOpen(task.exercise)} border="6px solid" borderColor="secondary.main" borderRadius="8px" p={4} position="relative">
+        <Box onClick={() => handleClickOpen(task.exercise)} border="6px solid" borderColor="secondary.main" borderRadius="8px" p={task.exercise.imageUrl ? 0 : 4} position="relative">
           <Box position="absolute" right="6px" top="6px">
             <Info fontSize="large" />
           </Box>
-          <FitnessCenter style={{ fontSize: 100 }} />
+          {
+            task.exercise.imageUrl
+              ? <img className={classes.image} src={task.exercise.imageUrl} alt={task.exercise.title} width={150}/>
+              : <FitnessCenter style={{ fontSize: 100 }}/>
+          }
         </Box>
         {task.exercise.measurementType === MeasurementType.TIMED && <Box mt={1}><Timer key={setIndex} seconds={task.sets[setIndex]} paused={paused} /></Box>}
       </Box>

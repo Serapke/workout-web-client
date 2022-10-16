@@ -1,10 +1,21 @@
 import React from 'react';
-import { TextField, Box, FormGroup, Chip, makeStyles, Typography, Button, MenuItem, FormControlLabel, Checkbox } from '@material-ui/core';
+import {
+  Box,
+  Button,
+  Checkbox,
+  Chip,
+  FormControlLabel,
+  FormGroup,
+  makeStyles,
+  MenuItem,
+  TextField,
+  Typography
+} from '@material-ui/core';
 import { Autocomplete } from '@material-ui/lab';
 import Fab from 'components/fab';
-import { BodyPart, Exercise, MeasurementType, Type, Equipment, Difficulty } from 'store/types';
+import { BodyPart, Difficulty, Equipment, Exercise, MeasurementType, Type } from 'store/types';
 import { capitalizeWord } from 'utils/text-utils';
-import { fabKeyboardStyles, onInputFocusHideFab, onInputBlurShowFab } from 'utils/ui-utils';
+import { fabKeyboardStyles, onInputBlurShowFab, onInputFocusHideFab } from 'utils/ui-utils';
 import { updateObjectInArray } from 'utils/immutable';
 
 export interface FieldState {
@@ -28,6 +39,7 @@ export interface FormState {
   measurementType: StringFieldState;
   bodyParts: FieldState;
   equipment: FieldState;
+  imageUrl: FieldState;
   difficulty: StringFieldState;
   bothSided: FieldState;
 }
@@ -78,6 +90,7 @@ export const EMPTY_FORM: FormState = {
   measurementType: { value: measurementTypes[0].value, errorMessage: "" },
   bodyParts: { value: [], errorMessage: "" },
   equipment: { value: [], errorMessage: "" },
+  imageUrl: EMPTY_STRING_FIELD,
   difficulty: { value: difficulties[0].value, errorMessage: "" },
   bothSided: { value: false, errorMessage: "" },
 };
@@ -93,6 +106,7 @@ export const formFromExercise = (exercise: Exercise): FormState => ({
   measurementType: { value: exercise.measurementType, errorMessage: "" },
   bodyParts: { value: exercise.bodyParts, errorMessage: "" },
   equipment: { value: exercise.equipment, errorMessage: "" },
+  imageUrl: { value: exercise.imageUrl, errorMessage: "" },
   difficulty: { value: exercise.difficulty, errorMessage: "" },
   bothSided: { value: exercise.bothSided, errorMessage: "" },
 });
@@ -109,6 +123,7 @@ const formToExercise = (form: FormState): Exercise => ({
   equipment: form.equipment.value,
   defaultQuantity: +form.defaultQuantity.value,
   measurementType: MeasurementType[form.measurementType.value],
+  imageUrl: form.imageUrl.value,
   difficulty: Difficulty[form.difficulty.value],
   bothSided: form.bothSided.value,
 });

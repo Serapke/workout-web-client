@@ -1,9 +1,9 @@
 import { Link, useNavigate } from 'react-router-dom';
 import React from 'react';
-import { Box, Typography, createStyles, makeStyles, Theme, Button } from '@material-ui/core';
-import { getExercise, deleteExercise } from 'services/exercise';
+import { Box, Button, createStyles, makeStyles, Theme, Typography } from '@material-ui/core';
+import { deleteExercise, getExercise } from 'services/exercise';
 import { Exercise } from 'store/types';
-import { Edit, Delete } from '@material-ui/icons';
+import { Delete, Edit } from '@material-ui/icons';
 import { useParams } from "react-router";
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -40,19 +40,25 @@ const ExercisePage: React.FunctionComponent = () => {
       <Box className={classes.header} display="flex" alignItems="center" justifyContent="space-between">
         <Typography variant="h4">{exercise.title}</Typography>
         <Box>
-          <Button color="secondary" component={Link} to={`/exercise/${id}/edit`} startIcon={<Edit />}>
+          <Button color="secondary" component={Link} to={`/exercise/${id}/edit`} startIcon={<Edit/>}>
             EDIT
           </Button>
-          <Button color="secondary" onClick={onDeleteClick} startIcon={<Delete />}>
+          <Button color="secondary" onClick={onDeleteClick} startIcon={<Delete/>}>
             DELETE
           </Button>
         </Box>
       </Box>
       <Box className={classes.fieldBox}>
+        {exercise.imageUrl &&
+            <Box>
+                <img src={exercise.imageUrl} alt={exercise.title} width={300}/>
+            </Box>
+        }
         <Typography variant="subtitle2">Description:</Typography>
         <Typography variant="body1">Starting position: {exercise.description.startingPosition}</Typography>
         <Box pl={2} pt={1}>
-          {exercise.description.steps.map((step, stepIndex) => <Typography variant="body1">{stepIndex + 1}. {step}</Typography>)}
+          {exercise.description.steps.map((step, stepIndex) => <Typography
+            variant="body1">{stepIndex + 1}. {step}</Typography>)}
         </Box>
       </Box>
       <Box className={classes.fieldBox}>

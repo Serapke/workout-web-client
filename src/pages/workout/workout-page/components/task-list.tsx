@@ -1,6 +1,6 @@
 import React from "react";
-import { Task, Exercise } from 'store/types';
-import { List, ListItem, Box, makeStyles, Theme, createStyles, Typography } from '@material-ui/core';
+import { Exercise, Task } from 'store/types';
+import { Box, createStyles, List, ListItem, makeStyles, Theme, Typography } from '@material-ui/core';
 import { FitnessCenter, Info } from '@material-ui/icons';
 import CircleItem from 'components/circle-item';
 import { exerciseMeasurementTypeToLetter } from 'utils/common';
@@ -70,7 +70,11 @@ const TaskList = ({ tasks }: OwnProps) => {
                     <Box position="absolute" right="6px" top="8px">
                       <Info className={classes.icon} style={{ fontSize: 14 }} />
                     </Box>
-                    <FitnessCenter className={classes.icon} style={{ fontSize: 50 }} />
+                    {
+                      task.exercise.imageUrl
+                        ? <img src={task.exercise.imageUrl} alt={task.exercise.title} width={70}/>
+                        : <FitnessCenter className={classes.icon} style={{ fontSize: 50 }}/>
+                    }
                   </Box>
                   <Box display="flex" flexDirection="column" px={2} py={1}>
                     <Typography variant="h6">{task.exercise.title}</Typography>
