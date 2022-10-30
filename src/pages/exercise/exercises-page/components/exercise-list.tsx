@@ -3,24 +3,30 @@ import { Exercise } from 'store/types';
 import React from 'react';
 import ExerciseItem from 'components/exercise';
 
-interface OwnProps {
-  exercises: Exercise[];
-  onExerciseClick: (id: number) => void;
-}
-
-const ExerciseList = ({ exercises, onExerciseClick }: OwnProps) => {
+const ExerciseList = ({ exercises, selectable = false, onExerciseClick }: OwnProps) => {
   return (
-    <List>
+    <List disablePadding>
       {exercises && exercises.map((exercise, index) => (
         <ExerciseItem
           key={exercise.id + "_" + index}
           exercise={exercise}
-          selectable={false}
+          selectable={selectable}
+          selected={exercise.selected}
           onClick={onExerciseClick}
         />
       ))}
     </List>
   );
+}
+
+interface OwnProps {
+  exercises: ExerciseListItem[];
+  onExerciseClick: (id: number) => void;
+  selectable?: boolean;
+}
+
+export interface ExerciseListItem extends Exercise {
+  selected?: boolean
 }
 
 export default ExerciseList;

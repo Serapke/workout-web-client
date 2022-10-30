@@ -6,6 +6,10 @@ export function getExercises(): Promise<Exercise[]> {
   return apiRequest(`exercise`).then((response: ApiResponse<ExercisesResponse>) => response.data.exercises);
 }
 
+export function fetchExercises(): Promise<ApiResponse<ExercisesResponse>> {
+  return apiRequest(`exercise`);
+}
+
 export function getExercise(id: string): Promise<Exercise> {
   return apiRequest(`exercise/${id}`).then((response: ApiResponse<Exercise>) => response.data);
 }

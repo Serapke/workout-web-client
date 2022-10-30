@@ -7,64 +7,75 @@ import {
   ListItemText,
   makeStyles,
   MenuItem,
-  Select, Theme
+  Select
 } from "@material-ui/core";
+import { capitalizeWord } from "../../utils/text-utils";
 
-interface OwnProps {
-  options: string[]
-}
-
-const useStyles = makeStyles((theme: Theme) =>
+const useStyles = makeStyles(() =>
   createStyles({
     formControl: {
-      margin: theme.spacing(1),
       minWidth: 120,
       maxWidth: 300,
     }
   }),
 );
 
-const FilterSelect = ({ options } : OwnProps) => {
+const FilterSelect = ({ options, value, label, loading, onChange }: OwnProps) => {
   const classes = useStyles();
-  const [values, setValues] = React.useState<string[]>([]);
+  const [selectedKeys, setSelectedKeys] = React.useState<string[]>([]);
 
-  const handleChange = (event: React.ChangeEvent<{ value: unknown }>) => {
-    setValues(event.target.value as string[]);
-  };
+  function handleChange(event: React.ChangeEvent<{ value: unknown }>) {
+    setSelectedKeys(event.target.value as string[]);
+    onChange(event.target.value as string[]);
+  }
 
-  const renderValue = (selected: string[]) => {
+  function renderValue(selected: string[]) {
     if (selected.length > 1) {
-      return `Selected (${selected.length})`
+      return `${capitalizeWord(selected[0])} & ${selected.length - 1} more...`
     }
-    return selected;
+    return capitalizeWord(selected[0]);
   }
 
   return (
-    <FormControl variant="outlined" className={classes.formControl}>
-      <InputLabel id="demo-mutiple-checkbox-label">Type</InputLabel>
+    <FormControl variant="outlined" className={classes.formControl} fullWidth>
+      <InputLabel id="demo-mutiple-checkbox-label">{label}</InputLabel>
       <Select
         labelId="demo-mutiple-checkbox-label"
         id="demo-mutiple-checkbox"
         multiple
-        value={values}
+        value={value}
         onChange={handleChange}
         renderValue={renderValue}
-        label="Type"
+        label={label}
       >
-        <MenuItem key="all" value="All">
-          <Checkbox checked={true} />
-          <ListItemText primary="All" />
-        </MenuItem>
-
-        {options.map(option => (
-          <MenuItem key={option} value={option}>
-            <Checkbox checked={values.indexOf(option) > -1} />
-            <ListItemText primary={option} />
+        {loading ?
+          <MenuItem key={"loading"} value={"loading"}>
+            <ListItemText primary={"Loading..."}/>
           </MenuItem>
-        ))}
+          :
+          options.map(option => (
+            <MenuItem key={option.key} value={option.key}>
+              <Checkbox checked={selectedKeys.indexOf(option.key) > -1}/>
+              <ListItemText primary={option.value}/>
+            </MenuItem>
+          ))
+        }
       </Select>
     </FormControl>
   )
+}
+
+interface OwnProps {
+  label: string
+  options: FilterSelectOption[]
+  value: string[]
+  loading?: boolean;
+  onChange: (value: string[]) => void;
+}
+
+export interface FilterSelectOption {
+  key: string;
+  value: string;
 }
 
 export default FilterSelect;

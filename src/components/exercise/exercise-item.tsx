@@ -4,15 +4,6 @@ import { Add, Check, FitnessCenter, Info } from "@material-ui/icons";
 import { capitalizeWord } from "../../utils/text-utils";
 import { Exercise } from "../../store/types";
 
-interface OwnProps {
-  exercise: Exercise;
-  selected?: boolean;
-  selectable?: boolean;
-  onClick?: (id: number) => void;
-  onSelect?: (id: number) => void;
-  onIconClick?: (exercise: Exercise) => void;
-}
-
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     card: {
@@ -57,8 +48,11 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 const ExerciseItem = ({
-                        exercise, selected = false, selectable = true, onClick = () => {
-  }, onSelect, onIconClick
+                        exercise,
+                        selected = false,
+                        selectable = true,
+                        onClick,
+                        onIconClick
                       }: OwnProps) => {
   const classes = useStyles();
 
@@ -68,16 +62,8 @@ const ExerciseItem = ({
     }
   };
 
-  const handleSelect = () => {
-    if (onSelect) {
-      onSelect(exercise.id);
-    }
-  }
-
-  const handleClick = () => {
-    if (onClick) {
-      onClick(exercise.id);
-    }
+  function handleClick() {
+    onClick(exercise.id);
   }
 
   return (
@@ -105,7 +91,7 @@ const ExerciseItem = ({
         </Box>
         {
           selectable &&
-            <span onClick={handleSelect} className={`${classes.statusIcon} ${selected ? classes.selected : ""}`}>
+            <span onClick={handleClick} className={`${classes.statusIcon} ${selected ? classes.selected : ""}`}>
             {selected ? <Check color="secondary"/> : <Add color="secondary"/>}
           </span>
         }
@@ -113,5 +99,13 @@ const ExerciseItem = ({
     </ListItem>
   );
 };
+
+interface OwnProps {
+  exercise: Exercise;
+  selected?: boolean;
+  selectable?: boolean;
+  onClick: (id: number) => void;
+  onIconClick?: (exercise: Exercise) => void;
+}
 
 export default ExerciseItem;
