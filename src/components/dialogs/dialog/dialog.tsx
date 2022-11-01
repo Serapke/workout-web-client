@@ -17,7 +17,7 @@ const Dialog = ({ title, open, handleClose, fullScreen = false, children, button
 
   return (
     <MuiDialog open={open} fullScreen={fullScreen} onClose={handleClose} classes={fixedToBottom ? { paper: classes.dialog } : {}}>
-      <AppBar className={classes.appBar}>
+      <AppBar position="sticky">
         <Toolbar>
           <IconButton edge="start" color="inherit" onClick={handleClose} aria-label="close">
             <Close />
@@ -35,9 +35,6 @@ const Dialog = ({ title, open, handleClose, fullScreen = false, children, button
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
-    appBar: {
-      position: 'relative',
-    },
     title: {
       marginLeft: theme.spacing(2),
       flex: 1,
