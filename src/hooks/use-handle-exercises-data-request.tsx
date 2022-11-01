@@ -56,10 +56,12 @@ export function useHandleExercisesDataRequest(): ExercisesRequestState {
           setBodyPartOptions(
             uniqueArray(data.exercises.flatMap(exercise => exercise.bodyParts))
               .map(bodyPart => ({ key: bodyPart, value: capitalizeWord(bodyPart)}))
+              .sort((a, b) => a.key.localeCompare(b.key))
           );
           setTypeOptions(
             uniqueArray(data.exercises.map(exercise => exercise.type))
               .map(type => ({ key: type, value: capitalizeWord(type)}))
+              .sort((a, b) => a.key.localeCompare(b.key))
           );
           filter(data.exercises, titleFilter, bodyPartsFilter, typeFilter)
         }
