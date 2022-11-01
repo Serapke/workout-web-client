@@ -9,12 +9,6 @@ import { RequestState } from "../../hooks/useRequest";
 import FilterSelect from "../select/filter-select";
 import { useHandleExercisesDataRequest } from "../../hooks/use-handle-exercises-data-request";
 
-interface OwnProps {
-  open: boolean;
-  handleClose: () => void;
-  onSelect: (selectedExercises: Exercise[]) => void;
-}
-
 const ExerciseSelectDialog = ({ open, handleClose, onSelect }: OwnProps) => {
   const classes = useStyles();
   const [selectedIds, setSelectedIds] = React.useState<number[]>([]);
@@ -118,5 +112,11 @@ const useStyles = makeStyles((theme: Theme) =>
     },
   }),
 );
+
+interface OwnProps {
+  open: boolean;
+  handleClose: () => void;
+  onSelect: (selectedExercises: Exercise[]) => void;
+}
 
 export default ExerciseSelectDialog;
