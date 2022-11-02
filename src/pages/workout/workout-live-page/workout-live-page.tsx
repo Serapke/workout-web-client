@@ -9,6 +9,7 @@ import { usePrompt } from "../../../hooks/usePrompt";
 import WorkoutCycleRestState from "./workout-cycle-rest-state";
 import { LiveWorkoutContext, LiveWorkoutPageState } from "context/live-workout-context";
 import { useProgressWorkout } from "../../../hooks/use-progress-workout";
+import StartTimer from "./components/start-timer";
 
 const WorkoutLivePage: React.FunctionComponent = () => {
   const {
@@ -20,6 +21,8 @@ const WorkoutLivePage: React.FunctionComponent = () => {
     setPaused,
     pageState,
   } = useContext(LiveWorkoutContext);
+  const [showStartTimer, setShowStartTimer] = React.useState<boolean>(true);
+
 
   const {
     onRestDone,
@@ -60,12 +63,24 @@ const WorkoutLivePage: React.FunctionComponent = () => {
 
   const hasMoreSets = liveWorkout.nextTask || currentSetIndex !== liveWorkout.currentTask.sets.length - 1;
 
+  function onStartTimerEnd() {
+    setShowStartTimer(false);
+  }
+
   return (
     <Box>
-      <WorkoutTime />
-      {stateComponent}
-      <Button disabled={paused || isSubmitting} onClick={onNextClick}>{hasMoreSets ? `Next` : `Finish`}</Button>
-      <ExitLiveWorkoutDialog />
+      {
+        showStartTimer
+          ? <StartTimer onEnd={onStartTimerEnd}/>
+          : (
+            <>
+              <WorkoutTime/>
+              {stateComponent}
+              <Button disabled={paused || isSubmitting} onClick={onNextClick}>{hasMoreSets ? `Next` : `Finish`}</Button>
+              <ExitLiveWorkoutDialog/>
+            </>
+          )
+      }
     </Box>
   );
 }

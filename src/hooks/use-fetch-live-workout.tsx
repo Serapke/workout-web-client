@@ -27,6 +27,7 @@ export function useFetchLiveWorkout(): LiveWorkoutContextType {
     beginRequest().then((data) => {
       if (isMounted()) {
         setLiveWorkout(data);
+        setDuration(data.duration);
       }
     }).catch((e) => {
       console.error(e);

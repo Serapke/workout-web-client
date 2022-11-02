@@ -4,14 +4,6 @@ import { Button, Typography } from '@material-ui/core';
 import completionSound from "./../../sounds/completion-sound.wav";
 import useTimer from 'hooks/useTimer';
 
-interface OwnProps {
-  title?: string;
-  seconds: number;
-  paused: boolean;
-  increaseBy?: number;
-  onEnd?: () => void;
-}
-
 const formatTwoDigits = (n: number, hideOnZero: boolean = false): string => {
   if (hideOnZero && n === 0) {
     return null;
@@ -76,6 +68,14 @@ const Timer = ({ title, seconds, paused, increaseBy, onEnd = () => { } }: OwnPro
       {increaseBy && <Button size="large" color="secondary" onClick={addTime}>+{increaseBy}</Button>}
     </React.Fragment>
   )
+}
+
+interface OwnProps {
+  title?: string;
+  seconds: number;
+  paused: boolean;
+  increaseBy?: number;
+  onEnd?: () => void;
 }
 
 export default Timer;
