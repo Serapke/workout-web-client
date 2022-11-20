@@ -17,6 +17,7 @@ export interface Task {
   draggableId: string;
   exercise: Exercise;
   sets: number[];
+  weight?: number;
 }
 
 export interface Exercise {

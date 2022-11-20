@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom"
 import { Box, Button, Chip, createStyles, Fab, makeStyles, Theme, Typography } from "@material-ui/core";
 import { deleteWorkout } from "../../../services/workout";
 import { Delete, Edit } from '@material-ui/icons';
-import TaskList from './components/task-list';
+import TaskList from "../../../components/task-list";
 import { useParams } from "react-router";
 import { useHandleWorkoutDataRequest } from "../../../hooks/use-handle-workout-data-request";
 
@@ -68,7 +68,7 @@ const WorkoutPage = () => {
         {showCycles() && <Chip label={`${workoutRequestData.workout.cycles} cycles`}/>}
       </Box>
       <Box>
-        <TaskList tasks={workoutRequestData.workout.tasks}/>
+        <TaskList tasks={workoutRequestData.workout.tasks} />
       </Box>
       <Fab variant="extended" className={classes.fab} color="secondary" onClick={onStartClick}>Start</Fab>
     </div>

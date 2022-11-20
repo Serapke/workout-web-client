@@ -8,11 +8,13 @@ import { List } from '@material-ui/core';
 import ExerciseDetailsDialog from 'components/exercise/exercise-details-dialog';
 import ExerciseUpdateSetDialog from "../workout/exercise-update-set-dialog";
 import ExerciseAddSetDialog from "../workout/exercise-add-set-dialog";
+import ExerciseUpdateWeightDialog from "../workout/exercise-update-weight-dialog";
 
 const TaskList = ({ tasks, updateTasks }: OwnProps) => {
   const [exerciseDetailsDialogState, setExerciseDetailsDialogState] = React.useState<ExerciseDetailsDialogState>(EXERCISE_DETAILS_DIALOG_STATE_EMPTY);
   const [exerciseAddSetDialogState, setExerciseAddSetDialogState] = React.useState<ExerciseAddSetDialogState>(EXERCISE_ADD_SET_DIALOG_STATE_EMPTY);
   const [exerciseUpdateSetDialogState, setExerciseUpdateSetDialogState] = React.useState<ExerciseUpdateSetDialogState>(EXERCISE_UPDATE_SET_DIALOG_STATE_EMPTY);
+  const [exerciseUpdateWeightDialogState, setExerciseUpdateWeightDialogState] = React.useState<ExerciseUpdateWeightDialogState>(EXERCISE_UPDATE_WEIGHT_DIALOG_STATE_EMPTY);
 
   const editable = !!updateTasks;
 
@@ -78,7 +80,8 @@ const TaskList = ({ tasks, updateTasks }: OwnProps) => {
     updateTasks(updateObjectInArray(tasks, {
       index: exerciseUpdateSetDialogState.taskIndex,
       item: {
-        ...task, sets: updateObjectInArray(sets, {
+        ...task,
+        sets: updateObjectInArray(sets, {
           index: exerciseUpdateSetDialogState.setIndex,
           item: repetitions
         })
@@ -97,7 +100,7 @@ const TaskList = ({ tasks, updateTasks }: OwnProps) => {
     handleExerciseUpdateSetDialogClose();
   }
 
-  const onDragEnd = (result: DropResult) => {
+  function onDragEnd(result: DropResult) {
     const { destination, source } = result;
 
     if (!destination) {
@@ -110,12 +113,36 @@ const TaskList = ({ tasks, updateTasks }: OwnProps) => {
 
     const reorderedTasks = reorder(tasks, source.index, destination.index);
     updateTasks(reorderedTasks);
-  };
+  }
 
-  const onDeleteClick = (index: number) => {
+  function onDeleteClick(index: number) {
     const updatedTasks = removeItem(tasks, { index });
     updateTasks(updatedTasks);
-  };
+  }
+
+  function onChangeWeightClick(taskIndex: number) {
+    if (!editable) return;
+    setExerciseUpdateWeightDialogState({
+      open: true,
+      taskIndex
+    });
+  }
+
+  function handleExerciseUpdateWeightDialogClose() {
+    setExerciseUpdateWeightDialogState(EXERCISE_UPDATE_WEIGHT_DIALOG_STATE_EMPTY);
+  }
+
+  function updateWeight(weight: number) {
+    const task = tasks[exerciseUpdateWeightDialogState.taskIndex];
+    updateTasks(updateObjectInArray(tasks, {
+      index: exerciseUpdateWeightDialogState.taskIndex,
+      item: {
+        ...task,
+        weight
+      }
+    }));
+    handleExerciseUpdateWeightDialogClose();
+  }
 
   return (
     <React.Fragment>
@@ -132,6 +159,7 @@ const TaskList = ({ tasks, updateTasks }: OwnProps) => {
                   onSetClick={onSetClick}
                   onAddSetClick={onAddSetClick}
                   onDeleteClick={onDeleteClick}
+                  onChangeWeightClick={onChangeWeightClick}
                   onIconClick={handleExerciseIconClick}
                 />
               ))}
@@ -160,16 +188,17 @@ const TaskList = ({ tasks, updateTasks }: OwnProps) => {
                   onUpdate={updateRepetition}
                   onDelete={deleteRepetition}
               />
+              <ExerciseUpdateWeightDialog
+                open={exerciseUpdateWeightDialogState.open}
+                initialWeight={tasks[exerciseUpdateWeightDialogState.taskIndex].weight}
+                onClose={handleExerciseUpdateWeightDialogClose}
+                onUpdate={updateWeight}
+              />
           </>
       }
     </React.Fragment>
   );
 };
-
-interface OwnProps {
-  tasks: Task[];
-  updateTasks?: (tasks: Task[]) => void;
-}
 
 const EXERCISE_ADD_SET_DIALOG_STATE_EMPTY: ExerciseAddSetDialogState = {
   open: false,
@@ -201,6 +230,21 @@ interface ExerciseUpdateSetDialogState {
   open: boolean;
   taskIndex: number;
   setIndex: number;
+}
+
+const EXERCISE_UPDATE_WEIGHT_DIALOG_STATE_EMPTY: ExerciseUpdateWeightDialogState = {
+  open: false,
+  taskIndex: 0,
+}
+
+interface ExerciseUpdateWeightDialogState {
+  open: boolean;
+  taskIndex: number;
+}
+
+interface OwnProps {
+  tasks: Task[];
+  updateTasks?: (tasks: Task[]) => void;
 }
 
 export default TaskList;

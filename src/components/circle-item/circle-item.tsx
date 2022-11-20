@@ -1,6 +1,6 @@
 import * as React from "react";
 
-import { makeStyles, Theme, createStyles, Box } from "@material-ui/core";
+import { Box, createStyles, makeStyles, Theme } from "@material-ui/core";
 
 type Style = "primary" | "secondary";
 
@@ -34,8 +34,8 @@ const fontSizeMap = {
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     primary: {
-      color: "#777",
-      backgroundColor: "white",
+      color: "#fff",
+      backgroundColor: "black",
     },
     secondary: {
       color: "black",

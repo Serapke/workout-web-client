@@ -39,7 +39,8 @@ export const updateWorkout: (workout: Workout) => Promise<ApiResponse<Workout>> 
     tasks: workout.tasks.map(task => ({
       id: task.id,
       exerciseId: task.exercise.id,
-      sets: task.sets
+      sets: task.sets,
+      weight: task.weight
     }))
   };
 
