@@ -24,9 +24,9 @@ export function useHandleExercisesDataRequest(): ExercisesRequestState {
   );
 
   function filter(exercises: Exercise[], title: string, bodyPartsFilter: string[], typesFilter: string[]) {
-    console.log(bodyPartsFilter);
+    const titleLowerCase = title.toLowerCase();
     const filteredExercises = exercises
-      .filter(exercise => exercise.title.toLowerCase().includes(title))
+      .filter(exercise => exercise.title.toLowerCase().includes(titleLowerCase))
       .filter(exercise => !bodyPartsFilter.length || exercise.bodyParts.some(bodyPart => bodyPartsFilter.includes(bodyPart)))
       .filter(exercise => !typesFilter.length || typesFilter.some(type => exercise.type.toLowerCase() === type.toLowerCase()));
     setVisibleExercises(filteredExercises);

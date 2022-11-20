@@ -48,6 +48,7 @@ export const updateExercise: (exercise: Exercise) => Promise<ApiResponse<any>> =
     difficulty: exercise.difficulty,
     bodyParts: exercise.bodyParts,
     equipment: exercise.equipment,
+    weighted: exercise.weighted,
   };
 
   return apiRequest(`exercise/${exercise.id}`, {
@@ -84,6 +85,7 @@ interface ExerciseUpdateRequest {
   difficulty: Difficulty;
   bodyParts: BodyPart[];
   equipment: Equipment[];
+  weighted: boolean;
 }
 
 interface ExercisesResponse {

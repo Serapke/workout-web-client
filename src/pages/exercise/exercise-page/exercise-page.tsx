@@ -86,8 +86,12 @@ const ExercisePage: React.FunctionComponent = () => {
         <Typography variant="body1">{exercise.difficulty}</Typography>
       </Box>
       <Box className={classes.fieldBox}>
-        <Typography variant="subtitle2">Both sided:</Typography>
+        <Typography variant="subtitle2">Alternating sides (left/right):</Typography>
         <Typography variant="body1">{exercise.bothSided ? "TRUE" : "FALSE"}</Typography>
+      </Box>
+      <Box className={classes.fieldBox}>
+        <Typography variant="subtitle2">Weighted:</Typography>
+        <Typography variant="body1">{exercise.weighted ? "TRUE" : "FALSE"}</Typography>
       </Box>
     </Box>
   )

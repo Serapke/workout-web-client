@@ -25,6 +25,7 @@ export interface Exercise {
   description: ExerciseDescription;
   defaultQuantity: number;
   bothSided: boolean;
+  weighted: boolean;
 
   type: Type;
   measurementType: MeasurementType;
@@ -70,7 +71,8 @@ export enum BodyPart {
 export enum Equipment {
   BODY_ONLY = "BODY ONLY",
   DUMBBELL = "DUMBBELL",
-  PULL_BAR = "PULL BAR"
+  PULL_BAR = "PULL BAR",
+  WEIGHT_MACHINE = "WEIGHT MACHINE",
 }
 
 export enum Difficulty {

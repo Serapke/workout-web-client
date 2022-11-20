@@ -21,7 +21,6 @@ export default function WorkoutEditForm({ workout, onSubmit }: OwnProps) {
 
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    console.log(workoutUpdate);
     onSubmit(workoutUpdate);
   }
 
@@ -32,7 +31,6 @@ export default function WorkoutEditForm({ workout, onSubmit }: OwnProps) {
   }
 
   function onTasksChange(tasks: Task[]) {
-    console.log(tasks);
     setWorkoutUpdate((prevState) => ({ ...prevState, tasks }));
   }
 

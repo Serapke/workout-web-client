@@ -2,12 +2,12 @@ import React from 'react';
 import {
   Box,
   Button,
-  Checkbox,
   Chip,
   FormControlLabel,
   FormGroup,
   makeStyles,
   MenuItem,
+  Switch,
   TextField,
   Typography
 } from '@material-ui/core';
@@ -42,6 +42,7 @@ export interface FormState {
   imageUrl: FieldState;
   difficulty: StringFieldState;
   bothSided: FieldState;
+  weighted: FieldState;
 }
 
 interface OwnProps {
@@ -93,13 +94,17 @@ export const EMPTY_FORM: FormState = {
   imageUrl: EMPTY_STRING_FIELD,
   difficulty: { value: difficulties[0].value, errorMessage: "" },
   bothSided: { value: false, errorMessage: "" },
+  weighted: { value: false, errorMessage: "" },
 };
 
 export const formFromExercise = (exercise: Exercise): FormState => ({
   title: { value: exercise.title, errorMessage: "" },
   description: {
     startingPosition: { value: exercise.description.startingPosition, errorMessage: "" },
-    steps: exercise.description ? exercise.description.steps.map(step => ({ value: step, errorMessage: "" })) : [EMPTY_STRING_FIELD]
+    steps: exercise.description ? exercise.description.steps.map(step => ({
+      value: step,
+      errorMessage: ""
+    })) : [EMPTY_STRING_FIELD]
   },
   type: { value: exercise.type, errorMessage: "" },
   defaultQuantity: { value: String(exercise.defaultQuantity), errorMessage: "" },
@@ -109,6 +114,7 @@ export const formFromExercise = (exercise: Exercise): FormState => ({
   imageUrl: { value: exercise.imageUrl, errorMessage: "" },
   difficulty: { value: exercise.difficulty, errorMessage: "" },
   bothSided: { value: exercise.bothSided, errorMessage: "" },
+  weighted: { value: exercise.weighted, errorMessage: "" },
 });
 
 const formToExercise = (form: FormState): Exercise => ({
@@ -126,6 +132,7 @@ const formToExercise = (form: FormState): Exercise => ({
   imageUrl: form.imageUrl.value,
   difficulty: Difficulty[form.difficulty.value],
   bothSided: form.bothSided.value,
+  weighted: form.weighted.value
 });
 
 const ExerciseForm = ({ form, bodyParts, updateForm, onSubmit }: OwnProps) => {
@@ -144,12 +151,18 @@ const ExerciseForm = ({ form, bodyParts, updateForm, onSubmit }: OwnProps) => {
 
   const onStartingPositionChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = { value: event.target.value, errorMessage: "" };
-    updateForm((prevState: FormState) => ({ ...prevState, description: { ...prevState.description, startingPosition: value } }));
+    updateForm((prevState: FormState) => ({
+      ...prevState,
+      description: { ...prevState.description, startingPosition: value }
+    }));
   }
 
   const onStepChange = (stepIndex: number, value: string) => {
     const action = { item: { value, errorMessage: "" }, index: stepIndex };
-    updateForm((prevState: FormState) => ({ ...prevState, description: { ...prevState.description, steps: updateObjectInArray(prevState.description.steps, action) } }));
+    updateForm((prevState: FormState) => ({
+      ...prevState,
+      description: { ...prevState.description, steps: updateObjectInArray(prevState.description.steps, action) }
+    }));
   }
 
   const onMeasurementTypeChange = (value: string) => () => {
@@ -172,7 +185,10 @@ const ExerciseForm = ({ form, bodyParts, updateForm, onSubmit }: OwnProps) => {
     if (form.description.steps.length > 5 || form.description.steps.some(step => !step.value)) {
       return;
     }
-    updateForm((prevState: FormState) => ({ ...prevState, description: { ...prevState.description, steps: [...prevState.description.steps, EMPTY_STRING_FIELD] } }))
+    updateForm((prevState: FormState) => ({
+      ...prevState,
+      description: { ...prevState.description, steps: [...prevState.description.steps, EMPTY_STRING_FIELD] }
+    }))
   }
 
   const handleSubmit = (event: React.FormEvent) => {
@@ -326,12 +342,6 @@ const ExerciseForm = ({ form, bodyParts, updateForm, onSubmit }: OwnProps) => {
           }
         </TextField>
       </Box>
-      <Box mt={2}>
-        <FormControlLabel
-          control={<Checkbox checked={form.bothSided.value} onChange={onCheckboxChange("bothSided")} id="bothSided" />}
-          label="Both sided (left/right)"
-        />
-      </Box>
       <Box marginTop={4}>
         <Typography variant="subtitle2">Description</Typography>
         <TextField
@@ -373,6 +383,18 @@ const ExerciseForm = ({ form, bodyParts, updateForm, onSubmit }: OwnProps) => {
           )
         })}
         <Button onClick={addStep} color="secondary">Add step</Button>
+      </Box>
+      <Box mt={2}>
+        <FormControlLabel
+          control={<Switch checked={form.bothSided.value} onChange={onCheckboxChange("bothSided")} id="bothSided"/>}
+          label="Alternating sides (left/right)"
+        />
+      </Box>
+      <Box mt={2} mb={8}>
+        <FormControlLabel
+          control={<Switch checked={form.weighted.value} onChange={onCheckboxChange("weighted")} id="weigthed"/>}
+          label="Weighted"
+        />
       </Box>
       <Fab type="submit">Save</Fab>
     </form>
